@@ -1,0 +1,16 @@
+{
+  "name": "unikit-edinburgh-mvp",
+  "version": "1.7.0",
+  "private": true,
+  "type": "module",
+  "description": "UniKit Edinburgh - a rules-first first-week shopping planner MVP",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs",
+    "test": "node --test",
+    "build:share": "node build-standalone.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

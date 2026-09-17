@@ -1,0 +1,9 @@
+.env
+.env.*
+node_modules/
+coverage/
+.DS_Store
+.vercel/
+test/
+Start Gemini Securely.command
+Start UniKit.command

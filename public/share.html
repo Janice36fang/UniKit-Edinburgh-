@@ -1,0 +1,2359 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5ef">
+  <meta name="description" content="UniKit Edinburgh 英国新生第一周采购助手">
+  <title>UniKit Edinburgh｜第一周采购助手 · 可分享版</title>
+  <meta name="unikit-build" content="standalone-1.7.0">
+  <style>
+:root {
+  color-scheme: light;
+  --bg: #f4f5ef;
+  --surface: #ffffff;
+  --surface-soft: #edf4ed;
+  --surface-warm: #fff4dc;
+  --ink: #17241b;
+  --muted: #66736a;
+  --line: #dce3dc;
+  --green: #176b43;
+  --green-dark: #123e29;
+  --green-fill: #dff1e4;
+  --amber: #946115;
+  --amber-fill: #fff0c7;
+  --red: #a14538;
+  --red-fill: #fbe8e4;
+  --blue: #275e8f;
+  --blue-fill: #e5f0fa;
+  --shadow: 0 20px 60px rgba(23, 45, 30, .09);
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { min-width: 320px; background: #dce8ff; scroll-behavior: smooth; }
+body { margin: 0; padding: 22px; background: #dce8ff; color: var(--ink); }
+button, input, select, textarea { font: inherit; }
+button, select, input[type="range"] { cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid rgba(23, 107, 67, .25); outline-offset: 2px; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: 9px; font-size: clamp(1.65rem, 3vw, 2.3rem); line-height: 1.15; letter-spacing: -.025em; font-weight: 620; }
+h2 { margin-bottom: 9px; font-size: 1rem; line-height: 1.4; }
+p { color: var(--muted); line-height: 1.65; }
+svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.skip-link { position: fixed; top: 8px; left: 8px; transform: translateY(-160%); z-index: 20; padding: 8px 12px; color: white; background: var(--green-dark); border-radius: 8px; }
+.skip-link:focus { transform: translateY(0); }
+.app-shell { width: min(1220px, 100%); min-height: calc(100vh - 44px); margin: 0 auto; overflow: hidden; border: 1px solid rgba(23, 55, 33, .14); border-radius: 24px; background: var(--bg); box-shadow: var(--shadow); }
+.site-header { min-height: 76px; padding: 15px 24px; display: flex; justify-content: space-between; align-items: center; gap: 18px; border-bottom: 1px solid var(--line); background: var(--surface); }
+.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; min-width: 0; }
+.brand-mark { width: 42px; height: 42px; display: grid; flex: 0 0 auto; place-items: center; color: var(--green); background: var(--green-fill); border-radius: 13px; }
+.brand-mark svg { width: 22px; height: 22px; }
+.brand strong, .brand small { display: block; }
+.brand strong { font-size: .98rem; font-weight: 650; }
+.brand small { margin-top: 3px; color: var(--muted); font-size: .72rem; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.mode-chip { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 999px; color: var(--muted); background: var(--surface-soft); font-size: .72rem; white-space: nowrap; }
+.settings-trigger { border: 0; transition: box-shadow .16s ease, transform .16s ease; }
+.settings-trigger:hover { box-shadow: 0 0 0 3px rgba(23,107,67,.1); transform: translateY(-1px); }
+.settings-cog { color: currentColor; font-size: .75rem; opacity: .7; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: #8a948d; }
+.mode-chip.live { color: var(--green); background: var(--green-fill); }
+.mode-chip.live .status-dot { background: var(--green); box-shadow: 0 0 0 3px rgba(23,107,67,.12); }
+.mode-chip.demo { color: var(--amber); background: var(--amber-fill); }
+.mode-chip.demo .status-dot { background: var(--amber); }
+.text-button { min-height: 36px; padding: 0 10px; border: 0; background: transparent; color: var(--muted); font-size: .78rem; }
+.text-button:hover { color: var(--green); }
+
+.step-nav { display: flex; justify-content: center; align-items: center; gap: 10px; min-height: 66px; padding: 10px 20px; border-bottom: 1px solid var(--line); background: var(--surface); }
+.step-nav button { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 0; border-radius: 10px; color: var(--muted); background: transparent; }
+.step-nav button span { width: 25px; height: 25px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 8px; font-size: .72rem; }
+.step-nav button b { font-size: .78rem; font-weight: 520; white-space: nowrap; }
+.step-nav button[aria-current="step"] { color: var(--green); background: var(--green-fill); }
+.step-nav button[aria-current="step"] span { border-color: transparent; color: white; background: var(--green); }
+.step-nav i { width: 56px; height: 1px; background: var(--line); }
+
+.page { padding: 32px; }
+.page-heading { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 24px; }
+.page-heading p:not(.eyebrow) { margin-bottom: 0; }
+.eyebrow { margin-bottom: 9px; color: var(--green); font-size: .7rem; font-weight: 700; letter-spacing: .065em; text-transform: uppercase; }
+.progress { width: 220px; height: 7px; flex: 0 0 auto; overflow: hidden; border-radius: 99px; background: var(--line); }
+.progress span { height: 100%; display: block; border-radius: inherit; background: var(--green); }
+.card { border: 1px solid var(--line); border-radius: 19px; background: var(--surface); }
+
+.contract-card { margin-bottom: 22px; padding: 22px; }
+.contract-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 22px; }
+.contract-heading h2 { margin-bottom: 7px; }
+.contract-heading p:not(.eyebrow) { max-width: 720px; margin: 0; color: var(--muted); font-size: .76rem; line-height: 1.6; }
+.human-loop { flex: 0 0 auto; padding: 7px 10px; border-radius: 999px; color: var(--blue); background: var(--blue-fill); font-size: .68rem; font-weight: 650; }
+.contract-inputs { display: grid; grid-template-columns: minmax(260px, .72fr) minmax(0, 1.28fr); gap: 14px; margin-top: 17px; }
+.contract-upload { min-height: 154px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 18px; border: 1px dashed var(--green); border-radius: 15px; color: var(--green); background: var(--green-fill); text-align: center; cursor: pointer; }
+.contract-upload > span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; color: white; background: var(--green); font-size: 1rem; }
+.contract-upload b { font-size: .78rem; }
+.contract-upload small { color: var(--muted); font-size: .66rem; line-height: 1.45; }
+.contract-upload input { width: 100%; margin-top: 5px; color: var(--muted); font-size: .68rem; }
+.contract-upload input::file-selector-button { margin-right: 8px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--surface); cursor: pointer; }
+.contract-paste { display: flex; flex-direction: column; gap: 7px; }
+.contract-paste label { color: var(--ink); font-size: .75rem; font-weight: 620; }
+.contract-paste textarea { min-height: 126px; padding: 11px 12px; resize: vertical; border: 1px solid var(--line); border-radius: 13px; color: var(--ink); background: var(--bg); line-height: 1.55; }
+.contract-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 14px; }
+.contract-actions .privacy-note { margin-left: auto; }
+.contract-status { margin-top: 12px; padding: 10px 12px; border-radius: 11px; font-size: .71rem; line-height: 1.5; }
+.contract-status.info, .contract-status.loading { color: var(--blue); background: var(--blue-fill); }
+.contract-status.success { color: var(--green); background: var(--green-fill); }
+.contract-status.warning { color: var(--amber); background: var(--amber-fill); }
+.contract-status.error { color: var(--red); background: var(--red-fill); }
+.contract-result { margin-top: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); }
+.contract-result-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.contract-result-head b, .contract-result-head small { display: block; }
+.contract-result-head b { font-size: .78rem; }
+.contract-result-head small { margin-top: 3px; color: var(--muted); font-size: .65rem; }
+.contract-result-head > span { padding: 4px 7px; border-radius: 6px; color: var(--green); background: var(--green-fill); font-size: .61rem; font-weight: 650; }
+.contract-profile-results { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 11px; }
+.contract-profile-results > div { display: grid; grid-template-columns: auto auto 1fr; gap: 6px; align-items: center; padding: 9px; border-radius: 10px; background: var(--surface); }
+.contract-profile-results b { font-size: .68rem; }
+.contract-profile-results small { grid-column: 1 / -1; color: var(--muted); font-size: .63rem; }
+.contract-result > p { margin: 11px 0 0; color: var(--muted); font-size: .67rem; line-height: 1.5; }
+.ai-value { color: var(--green); font-size: .68rem; font-weight: 650; }
+.ai-value.unknown { color: var(--amber); }
+.confidence { padding: 3px 5px; border-radius: 5px; color: var(--muted); background: var(--surface-soft); font-size: .58rem; white-space: nowrap; }
+.confidence.high { color: var(--green); background: var(--green-fill); }
+.confidence.medium { color: var(--blue); background: var(--blue-fill); }
+.confidence.low { color: var(--amber); background: var(--amber-fill); }
+.profile-ai-meta { padding: 8px 9px; border-radius: 9px; color: var(--muted); background: var(--blue-fill); font-size: .64rem; line-height: 1.4; }
+.profile-ai-meta b { color: var(--blue); }
+.profile-ai-meta .confidence { margin-left: 5px; }
+.profile-ai-meta small { display: block; margin-top: 4px; }
+
+.form-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(260px, .75fr); gap: 22px; align-items: start; }
+.form-card { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; padding: 22px; }
+.field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.field > label, .field legend { color: var(--ink); font-size: .79rem; font-weight: 620; }
+.field legend { margin-bottom: 7px; }
+.field input, .field select, .field textarea, .list-controls select, .budget-entry { width: 100%; min-height: 44px; padding: 10px 11px; border: 1px solid var(--line); border-radius: 11px; color: var(--ink); background: var(--bg); }
+.field textarea { resize: vertical; line-height: 1.6; }
+.field input[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: var(--red); background: var(--red-fill); }
+.field-error { min-height: 1em; color: var(--red); font-size: .68rem; }
+.field-help, .field-meta { color: var(--muted); font-size: .67rem; }
+.field-meta { display: flex; justify-content: space-between; gap: 12px; }
+.optional { color: var(--muted); font-size: .68rem; font-weight: 400; }
+.full-width { grid-column: 1 / -1; }
+.luggage-planner { padding: 16px; border: 1px solid var(--line); border-radius: 15px; background: var(--bg); }
+.luggage-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, .72fr); gap: 16px; align-items: center; }
+.luggage-head label, .custom-luggage label, .luggage-space-field legend { color: var(--ink); font-size: .79rem; font-weight: 620; }
+.luggage-head small { display: block; margin-top: 5px; color: var(--muted); font-size: .67rem; line-height: 1.5; }
+.luggage-head select { width: 100%; min-height: 44px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 11px; color: var(--ink); background: var(--surface); }
+.luggage-allowance-summary { margin: 11px 0 0; padding: 9px 11px; border-radius: 10px; color: var(--green); background: var(--green-fill); font-size: .69rem; line-height: 1.5; }
+.custom-luggage { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+.custom-luggage label { display: flex; flex-direction: column; gap: 6px; }
+.custom-luggage input { min-height: 41px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.luggage-space-field { margin: 10px 0 0; padding: 13px 0 0; border: 0; border-top: 1px solid var(--line); }
+.luggage-space-field legend { padding: 0; margin-bottom: 10px; }
+.luggage-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.luggage-option { position: relative; }
+.luggage-option input { position: absolute; opacity: 0; pointer-events: none; }
+.luggage-option span { min-height: 84px; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 11px 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); background: var(--surface); }
+.luggage-option b { color: var(--ink); font-size: .76rem; }
+.luggage-option small { font-size: .66rem; line-height: 1.45; }
+.luggage-option input:checked + span { border-color: var(--green); color: var(--green); background: var(--green-fill); box-shadow: inset 0 0 0 1px var(--green); }
+.luggage-option input:focus-visible + span { outline: 3px solid rgba(23,107,67,.25); outline-offset: 2px; }
+.money-input { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 11px; background: var(--bg); }
+.money-input:focus-within { outline: 3px solid rgba(23,107,67,.25); outline-offset: 2px; }
+.money-input span { padding-left: 12px; color: var(--muted); }
+.money-input input { border: 0; outline: 0; background: transparent; }
+.location-field { margin: 0; padding: 0; border: 0; }
+.bedding-planner { margin: 0; padding: 15px; border: 1px solid var(--line); border-radius: 15px; background: var(--bg); }
+.bedding-planner > p { margin: -2px 0 11px; color: var(--muted); font-size: .69rem; line-height: 1.55; }
+.bedding-prep-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+.bedding-prep-grid label { display: flex; flex-direction: column; gap: 6px; color: var(--ink); font-size: .72rem; font-weight: 620; }
+.bedding-prep-grid select { min-height: 41px; padding: 8px 9px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: var(--surface); }
+.domestic-prep-panel { display: block; padding: 14px 15px; border: 1px solid var(--line); border-radius: 15px; background: var(--bg); }
+.domestic-prep-panel summary { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: var(--ink); font-size: .79rem; font-weight: 650; cursor: pointer; }
+.domestic-prep-panel summary small, .domestic-prep-panel > p { color: var(--muted); font-size: .67rem; font-weight: 400; }
+.domestic-prep-panel > p { margin: 12px 0; line-height: 1.55; }
+.domestic-prep-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.prep-check { display: grid; grid-template-columns: auto 1fr; gap: 3px 8px; align-items: start; padding: 9px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.prep-check input { width: 16px; min-height: 16px; margin-top: 1px; }
+.prep-check b { color: var(--ink); font-size: .7rem; }
+.prep-check small { grid-column: 2; color: var(--muted); font-size: .61rem; line-height: 1.35; }
+.segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.segmented label { position: relative; }
+.segmented input { position: absolute; opacity: 0; pointer-events: none; }
+.segmented span { min-height: 44px; display: grid; place-items: center; padding: 9px; border: 1px solid var(--line); border-radius: 11px; color: var(--muted); background: var(--bg); font-size: .78rem; }
+.segmented input:checked + span { border-color: var(--green); color: var(--green); background: var(--green-fill); font-weight: 650; }
+.segmented input:focus-visible + span { outline: 3px solid rgba(23,107,67,.25); outline-offset: 2px; }
+.parsed-preview { padding: 11px 12px; border-radius: 11px; color: var(--green); background: var(--green-fill); font-size: .72rem; line-height: 1.5; }
+.parsed-preview .ambiguous { color: var(--amber); }
+.form-summary { padding: 11px 13px; border-radius: 11px; color: var(--red); background: var(--red-fill); font-size: .75rem; }
+.form-actions { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding-top: 2px; }
+.privacy-note { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: .69rem; }
+.privacy-note svg { width: 16px; height: 16px; }
+.primary-button, .secondary-button { min-height: 45px; display: inline-flex; justify-content: center; align-items: center; gap: 8px; padding: 0 17px; border-radius: 12px; font-weight: 620; font-size: .8rem; }
+.primary-button { border: 1px solid var(--green-dark); color: white; background: var(--green-dark); }
+.primary-button:hover { background: #0f3322; }
+.secondary-button { border: 1px solid var(--line); color: var(--ink); background: var(--surface); }
+.secondary-button:hover { border-color: #b9c7bc; background: var(--surface-soft); }
+.side-stack { display: grid; gap: 15px; }
+.warm-card, .boundary-card { padding: 21px; border-radius: 19px; }
+.warm-card { background: var(--surface-warm); }
+.boundary-card { border: 1px solid var(--line); background: var(--surface); }
+.warm-card p, .boundary-card li { margin-bottom: 0; color: var(--muted); font-size: .77rem; line-height: 1.65; }
+.icon-tile { width: 37px; height: 37px; display: grid; place-items: center; margin-bottom: 15px; border-radius: 12px; }
+.icon-tile.amber { color: var(--amber); background: var(--amber-fill); }
+.boundary-card ul { margin: 0; padding-left: 18px; }
+.boundary-card li + li { margin-top: 8px; }
+.boundary-card b { color: var(--ink); }
+
+.notice { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; padding: 13px 15px; border-radius: 13px; font-size: .75rem; line-height: 1.55; }
+.notice b { flex: 0 0 auto; }
+.notice.success { color: var(--green); background: var(--green-fill); }
+.notice.warning { color: var(--amber); background: var(--amber-fill); }
+.notice.info { color: var(--blue); background: var(--blue-fill); }
+.notice.danger { color: var(--red); background: var(--red-fill); }
+.stage-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 18px; }
+.stage-summary > div { padding: 13px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.stage-summary span, .stage-summary strong { display: block; }
+.stage-summary span { color: var(--muted); font-size: .66rem; }
+.stage-summary strong { margin-top: 5px; font-size: .84rem; font-weight: 650; }
+.stage-summary .domestic strong { color: var(--green); }
+.stage-summary .uk strong { color: var(--blue); }
+.stage-summary .verify strong { color: var(--amber); }
+.facility-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.facility-group { padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+.facility-group h2 { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; }
+.facility-group h2 span { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 9px; color: var(--green); background: var(--green-fill); font-size: .9rem; }
+.facility-row { min-height: 58px; display: grid; grid-template-columns: minmax(0, 1fr) 96px; align-items: center; gap: 8px; padding: 9px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .75rem; }
+.facility-label { min-width: 0; }
+.facility-label > span { display: block; }
+.facility-ai-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 6px; }
+.facility-ai-meta small { width: 100%; overflow: hidden; color: var(--muted); font-size: .59rem; line-height: 1.35; text-overflow: ellipsis; }
+.facility-ai-meta .ai-value { font-size: .61rem; }
+.facility-group select { width: 100%; min-height: 36px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 9px; color: var(--ink); background: var(--bg); font-size: .72rem; }
+.ai-confirmation-control { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 13px 15px; border: 1px solid var(--blue); border-radius: 13px; color: var(--blue); background: var(--blue-fill); cursor: pointer; }
+.ai-confirmation-control input { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--green); }
+.ai-confirmation-control b, .ai-confirmation-control small { display: block; }
+.ai-confirmation-control b { font-size: .75rem; }
+.ai-confirmation-control small { margin-top: 3px; color: var(--muted); font-size: .65rem; line-height: 1.45; }
+.split-actions { display: flex; justify-content: space-between; gap: 14px; margin-top: 21px; }
+
+.loading-page { min-height: 570px; display: grid; place-items: center; }
+.loading-card { width: min(620px, 100%); padding: 38px; text-align: center; }
+.loading-mark { width: 56px; height: 56px; display: grid; place-items: center; margin: 0 auto 20px; border-radius: 18px; background: var(--green-fill); }
+.loading-mark span { width: 22px; height: 22px; border: 3px solid rgba(23,107,67,.22); border-top-color: var(--green); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-steps { margin-top: 26px; text-align: left; }
+.loading-steps > div { display: grid; grid-template-columns: 31px 1fr auto; align-items: center; gap: 12px; padding: 15px 0; border-top: 1px solid var(--line); }
+.loading-steps > div > span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; color: var(--muted); background: var(--bg); font-size: .72rem; }
+.loading-steps b, .loading-steps small { display: block; }
+.loading-steps b { font-size: .79rem; }
+.loading-steps small { margin-top: 4px; color: var(--muted); font-size: .69rem; }
+.loading-steps em { color: var(--muted); font-size: .69rem; font-style: normal; }
+.loading-steps .done > span { color: white; background: var(--green); }
+.loading-steps .done em { color: var(--green); }
+.loading-steps .active > span { color: var(--green); background: var(--green-fill); }
+.loading-steps .active em { color: var(--amber); }
+
+.result-heading { align-items: center; }
+.status-pill { display: inline-flex; align-items: center; padding: 9px 12px; border-radius: 999px; font-size: .73rem; white-space: nowrap; }
+.status-pill.success { color: var(--green); background: var(--green-fill); }
+.status-pill.danger { color: var(--red); background: var(--red-fill); }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); margin-bottom: 16px; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+.metrics > div { padding: 16px 18px; border-right: 1px solid var(--line); }
+.metrics > div:last-child { border-right: 0; }
+.metrics span, .metrics strong { display: block; }
+.metrics span { margin-bottom: 5px; color: var(--muted); font-size: .69rem; }
+.metrics strong { font-size: 1.45rem; font-weight: 620; font-variant-numeric: tabular-nums; }
+.budget-card { margin-bottom: 16px; padding: 16px 18px; border-radius: 17px; background: var(--surface-warm); }
+.budget-card-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.budget-card-head h2 { margin-bottom: 8px; }
+.budget-entry { width: 120px; display: flex; align-items: center; padding: 0; background: white; }
+.budget-entry span { padding-left: 11px; color: var(--muted); }
+.budget-entry input { width: 100%; min-height: 42px; padding: 9px 9px 9px 4px; border: 0; outline: 0; color: var(--ink); background: transparent; font-weight: 650; }
+#budget-range { width: 100%; accent-color: var(--green); }
+.range-labels { display: flex; justify-content: space-between; color: var(--muted); font-size: .66rem; }
+.budget-diff { margin-top: 8px; color: var(--amber); font-size: .73rem; line-height: 1.55; }
+.result-layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, .6fr); gap: 18px; align-items: start; }
+.section-heading { min-height: 49px; display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 10px; }
+.section-heading h2 { margin-bottom: 0; }
+.section-heading .eyebrow { margin-bottom: 4px; }
+.list-controls select { min-height: 36px; padding: 6px 9px; background: var(--surface); font-size: .7rem; }
+.shopping-list { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+.shopping-item { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(105px, .85fr) 70px 84px; gap: 12px; align-items: center; padding: 14px; border-bottom: 1px solid var(--line); }
+.shopping-item:last-child { border-bottom: 0; }
+.item-main { min-width: 0; }
+.item-main > div { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.item-main strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .79rem; font-weight: 650; }
+.priority { flex: 0 0 auto; padding: 3px 5px; border-radius: 5px; color: var(--muted); background: var(--bg); font-size: .59rem; }
+.priority.p0 { color: var(--green); background: var(--green-fill); }
+.item-main small, .item-rule small, .item-price small { display: block; margin-top: 4px; color: var(--muted); font-size: .65rem; line-height: 1.45; }
+.item-rule { min-width: 0; color: var(--muted); font-size: .68rem; line-height: 1.4; }
+.item-price { text-align: right; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.item-state { justify-self: end; padding: 5px 8px; border-radius: 999px; font-size: .64rem; white-space: nowrap; }
+.item-state.current { color: var(--green); background: var(--green-fill); }
+.item-state.domestic { color: var(--green); background: var(--green-fill); }
+.item-state.uk { color: var(--blue); background: var(--blue-fill); }
+.item-state.verify { color: var(--blue); background: var(--blue-fill); }
+.item-state.deferred { color: var(--amber); background: var(--amber-fill); }
+.product-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+.product-group { padding: 15px; border-bottom: 1px solid var(--line); }
+.product-group:last-child { border-bottom: 0; }
+.product-group-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 9px; }
+.product-group-head h3 { margin: 0; font-size: .78rem; }
+.source-badge { flex: 0 0 auto; padding: 3px 6px; border-radius: 6px; font-size: .59rem; }
+.source-badge.live { color: var(--green); background: var(--green-fill); }
+.source-badge.snapshot { color: var(--amber); background: var(--amber-fill); }
+.product-card { padding: 10px; border-radius: 11px; background: var(--bg); }
+.product-card + .product-card { margin-top: 7px; }
+.product-card strong { display: block; font-size: .71rem; line-height: 1.45; }
+.product-card span, .product-card small { display: block; margin-top: 3px; color: var(--muted); font-size: .63rem; line-height: 1.4; }
+.purchase-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.purchase-links a { padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; color: var(--green); background: var(--surface); font-size: .63rem; font-weight: 650; text-decoration: none; }
+.purchase-links a:hover { border-color: var(--green); background: var(--green-fill); }
+.purchase-links a.direct { color: white; border-color: var(--green); background: var(--green); }
+.empty-products { padding: 20px; color: var(--muted); font-size: .73rem; line-height: 1.6; }
+.bottom-actions { margin-top: 20px; }
+.toast { position: fixed; left: 50%; bottom: 24px; z-index: 30; transform: translateX(-50%); padding: 11px 15px; border-radius: 11px; color: white; background: rgba(20, 41, 28, .94); box-shadow: 0 10px 30px rgba(0,0,0,.18); font-size: .75rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+body.settings-open { overflow: hidden; }
+.settings-layer { position: fixed; inset: 0; z-index: 80; display: flex; justify-content: flex-end; }
+.settings-backdrop { position: absolute; inset: 0; border: 0; background: rgba(18, 32, 23, .35); backdrop-filter: blur(2px); }
+.settings-drawer { position: relative; width: min(540px, 100%); height: 100%; overflow-y: auto; border-left: 1px solid var(--line); background: var(--surface); box-shadow: -24px 0 60px rgba(18, 40, 25, .15); }
+.settings-drawer-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; padding: 25px 28px 21px; border-bottom: 1px solid var(--line); }
+.settings-drawer-head h2 { margin-bottom: 5px; font-size: 1.25rem; }
+.settings-drawer-head p:not(.eyebrow) { max-width: 430px; margin: 0; font-size: .72rem; line-height: 1.55; }
+.drawer-close { width: 38px; height: 38px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); background: var(--surface); font-size: 1.25rem; line-height: 1; }
+.drawer-close:hover { color: var(--green); background: var(--surface-soft); }
+.settings-form { padding: 23px 28px 28px; }
+.source-fieldset { margin: 0; padding: 0; border: 0; }
+.source-fieldset legend { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; color: var(--ink); font-size: .8rem; font-weight: 650; }
+.source-fieldset legend small { color: var(--muted); font-size: .62rem; font-weight: 450; }
+.source-options { display: grid; gap: 10px; }
+.source-option { position: relative; display: grid; grid-template-columns: 42px minmax(0,1fr) auto; align-items: center; gap: 12px; min-height: 78px; padding: 13px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); cursor: pointer; transition: border-color .16s ease, background .16s ease, box-shadow .16s ease; }
+.source-option:hover { border-color: #b9c7bc; background: #fbfcfa; }
+.source-option:has(input:checked) { border: 2px solid var(--green); padding: 12px; background: #f7fcf8; box-shadow: 0 0 0 3px rgba(23,107,67,.07); }
+.source-option:has(input:disabled) { cursor: not-allowed; opacity: .68; }
+.source-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.source-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; font-size: 1.05rem; font-weight: 700; }
+.source-icon.openai { color: var(--green); background: var(--green-fill); }
+.source-icon.gemini { color: #255cb5; background: #eaf1ff; }
+.source-icon.codex { color: white; background: var(--green); }
+.source-icon.demo { color: var(--blue); background: var(--blue-fill); }
+.source-copy b, .source-copy small { display: block; }
+.source-copy b { font-size: .79rem; }
+.source-copy small { margin-top: 4px; color: var(--muted); font-size: .64rem; line-height: 1.45; }
+.source-option .source-badge { padding: 5px 7px; border-radius: 7px; color: var(--green); background: var(--green-fill); font-size: .58rem; font-weight: 650; white-space: nowrap; }
+.source-option .source-badge.demo { color: var(--blue); background: var(--blue-fill); }
+.source-option .source-badge.unavailable { color: var(--muted); background: var(--surface-soft); }
+.source-option .source-badge.warning { color: var(--amber); background: var(--amber-fill); }
+.model-settings { display: grid; gap: 9px; margin-top: 18px; padding: 16px; border: 1px solid var(--line); border-radius: 15px; background: var(--bg); }
+.model-settings h3 { margin: 0; font-size: .88rem; }
+.model-settings .eyebrow { margin-bottom: 4px; }
+.model-settings label { margin-top: 3px; font-size: .7rem; font-weight: 650; }
+.model-settings select { width: 100%; min-height: 43px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: var(--surface); }
+.model-settings p { margin: 0; font-size: .65rem; line-height: 1.5; }
+.model-settings.is-disabled { opacity: .55; }
+.connection-status { display: grid; gap: 3px; margin-top: 14px; padding: 12px 13px; border-radius: 12px; color: var(--blue); background: var(--blue-fill); }
+.connection-status b { font-size: .72rem; }
+.connection-status span { font-size: .64rem; line-height: 1.45; }
+.connection-status.success { color: var(--green); background: var(--green-fill); }
+.connection-status.warning { color: var(--amber); background: var(--amber-fill); }
+.connection-status.error { color: var(--red); background: var(--red-fill); }
+.wide-button { width: 100%; margin-top: 10px; }
+.settings-actions { position: sticky; bottom: -28px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin: 24px -28px -28px; padding: 16px 28px; border-top: 1px solid var(--line); background: rgba(255,255,255,.96); backdrop-filter: blur(8px); }
+
+@media (max-width: 920px) {
+  .facility-grid { grid-template-columns: 1fr 1fr; }
+  .form-layout, .result-layout { grid-template-columns: 1fr; }
+  .side-stack { grid-template-columns: 1fr 1fr; }
+  .contract-actions .privacy-note { width: 100%; margin-left: 0; }
+}
+
+@media (max-width: 620px) {
+  body { padding: 0; }
+  .app-shell { min-height: 100vh; border-width: 0; border-radius: 0; }
+  .site-header { min-height: 68px; padding: 12px 14px; }
+  .brand-mark { width: 38px; height: 38px; }
+  .brand small, .header-actions > .text-button { display: none; }
+  .settings-trigger { padding: 9px; }
+  .settings-trigger #service-mode { display: none; }
+  .step-nav { justify-content: space-between; gap: 4px; padding: 9px 10px; }
+  .step-nav i { flex: 1; max-width: 34px; }
+  .step-nav button { gap: 5px; padding: 6px; }
+  .step-nav button b { font-size: .68rem; }
+  .page { padding: 22px 14px 28px; }
+  .page-heading { align-items: stretch; flex-direction: column; gap: 14px; }
+  .progress { width: 100%; }
+  .form-card, .facility-grid, .side-stack { grid-template-columns: 1fr; }
+  .contract-card { padding: 17px; }
+  .contract-heading, .contract-actions { align-items: stretch; flex-direction: column; }
+  .human-loop { align-self: flex-start; }
+  .contract-inputs, .contract-profile-results { grid-template-columns: 1fr; }
+  .contract-actions .primary-button, .contract-actions .secondary-button { width: 100%; }
+  .full-width { grid-column: auto; }
+  .luggage-head, .luggage-options { grid-template-columns: 1fr; }
+  .custom-luggage { grid-template-columns: 1fr 1fr; }
+  .bedding-prep-grid { grid-template-columns: 1fr 1fr; }
+  .domestic-prep-list { grid-template-columns: 1fr 1fr; }
+  .form-actions { align-items: stretch; flex-direction: column; }
+  .form-actions .primary-button { width: 100%; }
+  .privacy-note { justify-content: center; }
+  .metrics { grid-template-columns: 1fr 1fr; }
+  .stage-summary { grid-template-columns: 1fr 1fr; }
+  .metrics > div:nth-child(2) { border-right: 0; }
+  .metrics > div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .shopping-item { grid-template-columns: 1fr auto; gap: 9px; }
+  .item-rule { grid-column: 1 / -1; grid-row: 2; }
+  .item-price { grid-column: 1; grid-row: 3; text-align: left; }
+  .item-state { grid-column: 2; grid-row: 1 / span 3; }
+  .budget-card-head { align-items: flex-start; }
+  .budget-entry { width: 105px; }
+  .notice { flex-direction: column; gap: 3px; }
+  .loading-card { padding: 28px 18px; }
+  .loading-steps > div { grid-template-columns: 31px 1fr; }
+  .loading-steps em { grid-column: 2; }
+  .settings-drawer { width: 100%; }
+  .settings-drawer-head { padding: 20px 17px 17px; }
+  .settings-form { padding: 18px 17px 22px; }
+  .source-option { grid-template-columns: 40px minmax(0,1fr); }
+  .source-option > .source-badge { grid-column: 2; justify-self: start; }
+  .settings-actions { bottom: -22px; margin: 20px -17px -22px; padding: 14px 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .loading-mark span { animation: none; }
+}
+
+</style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <div class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="#profile" data-route="profile" aria-label="UniKit Edinburgh 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 9h16l-1 11H5L4 9Zm3 0 2-5h6l2 5M8 13v3m4-3v3m4-3v3"/></svg>
+        </span>
+        <span><strong>UniKit Edinburgh</strong><small>英国新生第一周采购助手</small></span>
+      </a>
+      <div class="header-actions">
+        <button id="ai-settings-open" class="mode-chip settings-trigger" type="button" aria-haspopup="dialog" aria-controls="ai-settings-layer">
+          <span class="status-dot"></span><span id="service-mode">正在检查服务</span><span class="settings-cog" aria-hidden="true">⚙</span>
+        </button>
+        <button id="reset-button" class="text-button" type="button">重新开始</button>
+      </div>
+    </header>
+
+    <nav class="step-nav" aria-label="采购方案步骤">
+      <button type="button" data-route="profile" aria-current="step"><span>1</span><b>填写信息</b></button>
+      <i aria-hidden="true"></i>
+      <button type="button" data-route="facilities" disabled><span>2</span><b>宿舍设施</b></button>
+      <i aria-hidden="true"></i>
+      <button type="button" data-route="results" disabled><span>3</span><b>采购结果</b></button>
+    </nav>
+
+    <main id="main-content">
+      <section id="page-profile" class="page" data-page="profile" aria-labelledby="profile-title">
+        <div class="page-heading">
+          <div><p class="eyebrow">步骤 1 / 3</p><h1 id="profile-title">告诉我你的入住情况</h1><p>上传宿舍合同让AI预填，或直接手动完成全部选项。</p></div>
+          <div class="progress" aria-label="完成三分之一"><span style="width:33.333%"></span></div>
+        </div>
+
+        <section class="contract-card card" aria-labelledby="contract-title">
+          <div class="contract-heading">
+            <div><p class="eyebrow">AI 快速填写 · 选填</p><h2 id="contract-title">上传宿舍合同</h2><p>识别房型、床型和明确写出的宿舍设施。未出现在材料中的信息固定返回“不确定”，不会自行猜测。</p></div>
+            <span class="human-loop">AI预填 → 人工确认</span>
+          </div>
+          <div class="contract-inputs">
+            <label class="contract-upload" for="contract-file">
+              <span aria-hidden="true">↑</span>
+              <b>选择 PDF、图片或文本合同</b>
+              <small>最大 4MB · 只需上传包含房型与设施的关键页面</small>
+              <input id="contract-file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.md,application/pdf,image/png,image/jpeg,image/webp,text/plain">
+            </label>
+            <div class="contract-paste">
+              <label for="contract-text">也可以粘贴住宿说明</label>
+              <textarea id="contract-text" rows="5" maxlength="12000" placeholder="例如：Your room contains a 4ft small double bed...&#10;&#10;单文件演示版建议使用此输入；服务器版可直接识别PDF和图片。"></textarea>
+            </div>
+          </div>
+          <div class="contract-actions">
+            <button id="analyze-contract" class="primary-button" type="button">识别并自动填写</button>
+            <button id="load-example-contract" class="secondary-button" type="button">载入示例合同</button>
+            <button id="clear-contract" class="text-button" type="button">清除识别结果</button>
+            <span class="privacy-note">请先移除姓名、地址、学号等个人信息；API密钥不会进入浏览器。</span>
+          </div>
+          <div id="contract-status" class="contract-status" role="status" aria-live="polite" hidden></div>
+          <div id="contract-result" class="contract-result" aria-live="polite" hidden></div>
+        </section>
+
+        <div class="form-layout">
+          <form id="profile-form" class="card form-card" novalidate>
+            <div class="field">
+              <label for="room-type">宿舍房型</label>
+              <select id="room-type" name="roomType" required aria-describedby="room-type-error">
+                <option value="">请选择</option>
+                <option value="ensuite-small-double">En-suite（默认 Small Double）</option>
+                <option value="studio-double">Studio（默认 Double）</option>
+                <option value="shared-single">Shared flat（默认 Single）</option>
+                <option value="shared-bath-single">Shared bathroom（默认 Single）</option>
+                <option value="twin-single">Twin room（默认 Single）</option>
+                <option value="unknown">还不确定</option>
+              </select>
+              <small class="field-error" id="room-type-error"></small>
+              <div id="room-type-ai" class="profile-ai-meta" hidden></div>
+            </div>
+            <div class="field">
+              <label for="bed-size">床的大小</label>
+              <select id="bed-size" name="bedSize" required aria-describedby="bed-size-help bed-size-error">
+                <option value="">请选择或确认</option>
+                <option value="single">Single · 约 90 × 190cm</option>
+                <option value="small-double">Small Double · 约 120 × 190cm</option>
+                <option value="double">Double · 约 135 × 190cm</option>
+                <option value="unknown">还不确定</option>
+              </select>
+              <small id="bed-size-help" class="field-help">房型只会填入常见默认值；购买前仍以住宿合同标注为准。</small>
+              <small class="field-error" id="bed-size-error"></small>
+              <div id="bed-size-ai" class="profile-ai-meta" hidden></div>
+            </div>
+            <div class="field">
+              <label for="move-in">距离入住还有多久</label>
+              <select id="move-in" name="moveIn" required aria-describedby="move-in-error">
+                <option value="">请选择</option>
+                <option value="within-7">7 天以内</option>
+                <option value="8-14">8—14 天</option>
+                <option value="over-14">14 天以上</option>
+                <option value="moved-in">已经入住</option>
+              </select>
+              <small class="field-error" id="move-in-error"></small>
+            </div>
+            <div class="field">
+              <label for="budget">第一周英国落地采购预算</label>
+              <div class="money-input"><span>£</span><input id="budget" name="budget" type="number" min="40" max="500" step="1" inputmode="decimal" placeholder="180" required aria-describedby="budget-help budget-error"></div>
+              <small id="budget-help" class="field-help">国内携带项不计入这笔英镑预算；允许 £40—£500。</small>
+              <small class="field-error" id="budget-error"></small>
+            </div>
+            <div class="field">
+              <label for="cooking">做饭频率</label>
+              <select id="cooking" name="cooking" required aria-describedby="cooking-error">
+                <option value="">请选择</option>
+                <option value="rarely">几乎不做饭</option>
+                <option value="sometimes">每周 3—5 次</option>
+                <option value="daily">基本每天做饭</option>
+              </select>
+              <small class="field-error" id="cooking-error"></small>
+            </div>
+            <fieldset class="field location-field">
+              <legend>你现在在哪里</legend>
+              <div class="segmented">
+                <label><input type="radio" name="location" value="china" required><span>还在国内</span></label>
+                <label><input type="radio" name="location" value="uk"><span>已经到英国</span></label>
+              </div>
+              <small class="field-error" id="location-error"></small>
+            </fieldset>
+            <fieldset class="field full-width bedding-planner">
+              <legend>床品准备情况</legend>
+              <p>这里记录你自己是否已经准备，和下一页“宿舍是否提供”分开判断。床笠或床单有一个已准备，就不会重复推荐铺床用品。</p>
+              <div class="bedding-prep-grid">
+                <label>床笠<select name="preparedFittedSheet" required><option value="">请选择</option><option value="yes">已准备</option><option value="no">没准备</option><option value="unknown">不确定</option></select></label>
+                <label>床单<select name="preparedFlatSheet" required><option value="">请选择</option><option value="yes">已准备</option><option value="no">没准备</option><option value="unknown">不确定</option></select></label>
+                <label>枕头<select name="preparedPillow" required><option value="">请选择</option><option value="yes">已准备</option><option value="no">没准备</option><option value="unknown">不确定</option></select></label>
+                <label>枕套<select name="preparedPillowcase" required><option value="">请选择</option><option value="yes">已准备</option><option value="no">没准备</option><option value="unknown">不确定</option></select></label>
+              </div>
+              <small class="field-error" id="bedding-preparation-error"></small>
+            </fieldset>
+            <details class="field full-width domestic-prep-panel">
+              <summary><span>其他国内准备物品</span><small>选填 · 来自你提供的清单</small></summary>
+              <p>勾选已经准备好的物品。运输标签来自你提供的图片，仅作整理提示，出发前仍需核对航空公司与海关规定。系统只对能明确对应的品类排重；锅具仍需确认炉灶兼容。</p>
+              <div id="domestic-prep-list" class="domestic-prep-list"></div>
+            </details>
+            <div class="field full-width luggage-planner">
+              <div class="luggage-head">
+                <div><label for="luggage-preset">你的行李额度</label><small>随身行李优先留给证件、电子设备和贵重物品；下面的生活用品空间按托运行李计算。</small></div>
+                <select id="luggage-preset" name="luggagePreset" aria-describedby="luggage-allowance-error">
+                  <option value="2x23">2 × 23kg + 1 件随身行李（常见）</option>
+                  <option value="1x23">1 × 23kg + 1 件随身行李</option>
+                  <option value="2x20">2 × 20kg + 1 件随身行李</option>
+                  <option value="custom">自定义额度</option>
+                </select>
+              </div>
+              <div id="custom-luggage" class="custom-luggage" hidden>
+                <label>托运行李件数<input id="checked-bag-count" name="checkedBagCount" type="number" min="1" max="4" step="1" value="2"></label>
+                <label>每件额度（kg）<input id="checked-bag-kg" name="checkedBagKg" type="number" min="15" max="32" step="1" value="23"></label>
+                <label>随身行李件数<input id="carry-on-count" name="carryOnCount" type="number" min="0" max="2" step="1" value="1"></label>
+              </div>
+              <small class="field-error" id="luggage-allowance-error"></small>
+              <p id="luggage-allowance-summary" class="luggage-allowance-summary"></p>
+              <fieldset class="luggage-space-field">
+                <legend>你愿意给生活用品留多少空间？</legend>
+                <div id="luggage-options" class="luggage-options" aria-describedby="luggage-space-error"></div>
+                <small class="field-error" id="luggage-space-error"></small>
+              </fieldset>
+            </div>
+            <div class="field">
+              <label for="guest-count">平时常见招待人数</label>
+              <select id="guest-count" name="guestCount" required aria-describedby="guest-count-error">
+                <option value="">请选择</option>
+                <option value="none">不招待 / 只准备自己</option>
+                <option value="one-two">通常 1—2 位朋友</option>
+                <option value="three-plus">通常 3 位以上</option>
+              </select>
+              <small class="field-error" id="guest-count-error"></small>
+            </div>
+            <div class="field full-width">
+              <label for="carried-text">行李中已经携带的物品 <span class="optional">选填</span></label>
+              <textarea id="carried-text" name="carriedText" rows="4" maxlength="500" placeholder="例如：转换插头、洗漱用品、一条薄毯子"></textarea>
+              <div class="field-meta"><small>中英文都可以；不确定的匹配会请你确认。</small><small id="text-count">0 / 500</small></div>
+              <div id="parsed-preview" class="parsed-preview" hidden></div>
+            </div>
+            <div id="form-summary" class="form-summary" role="alert" hidden></div>
+            <div class="form-actions full-width">
+              <span class="privacy-note"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3m2 0H5v10h14V10Z"/></svg>本版不收集姓名、学校或精确地址</span>
+              <button class="primary-button" type="submit">继续检查宿舍设施 <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+
+          <aside class="side-stack">
+            <div class="warm-card">
+              <span class="icon-tile amber" aria-hidden="true">✦</span>
+              <h2>为什么固定爱丁堡？</h2>
+              <p>第一期先把一个城市的住宿表达、规格条件和购买渠道做准，避免做成泛泛的购物清单。</p>
+            </div>
+            <div class="boundary-card">
+              <p class="eyebrow">本页的真实边界</p>
+              <h2>规则同时决定买什么、在哪里买</h2>
+              <ul>
+                <li><b>自由文本</b>：有密钥时由 AI 结构化；否则用本地词典。</li>
+                <li><b>薄毯子</b>：标成不确定项，不直接等同冬季被芯。</li>
+                <li><b>购买地</b>：按行李空间、尺寸、电器兼容和体积判断。</li>
+                <li><b>预算与排重</b>：始终由可测试的代码处理。</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="page-facilities" class="page" data-page="facilities" aria-labelledby="facilities-title" hidden>
+        <div class="page-heading">
+          <div><p class="eyebrow">步骤 2 / 3</p><h1 id="facilities-title">确认宿舍设施</h1><p id="facilities-subtitle">逐项确认宿舍已经提供的设施；“不确定”不会被当成“没有”。</p></div>
+          <div class="progress" aria-label="完成三分之二"><span style="width:66.666%"></span></div>
+        </div>
+        <div id="ai-confirmation-banner" class="notice info" hidden></div>
+        <div id="bed-warning" class="notice warning" hidden role="status"><b>床型待核实</b><span>请查看住宿合同或联系宿舍；床品会显示“待核实”，不会假设为 Small Double。</span></div>
+
+        <form id="facilities-form">
+          <div id="facility-groups" class="facility-grid"></div>
+          <div id="rule-summary" class="notice success" aria-live="polite"></div>
+          <label id="ai-confirmation-control" class="ai-confirmation-control" hidden>
+            <input id="confirm-ai-results" type="checkbox">
+            <span><b>我已确认AI预填结果</b><small>我检查了原文依据，并修改了错误或不确定的信息。</small></span>
+          </label>
+          <div id="ai-confirmation-error" class="form-summary" role="alert" hidden></div>
+          <div class="split-actions">
+            <button class="secondary-button" type="button" data-route="profile">← 返回修改</button>
+            <button class="primary-button" type="submit">生成采购方案 <span aria-hidden="true">✦</span></button>
+          </div>
+        </form>
+      </section>
+
+      <section id="page-loading" class="page loading-page" data-page="loading" aria-labelledby="loading-title" hidden>
+        <div class="loading-card card">
+          <span class="loading-mark" aria-hidden="true"><span></span></span>
+          <p class="eyebrow">正在生成</p>
+          <h1 id="loading-title">先运行规则，再补充商品事实</h1>
+          <div class="loading-steps" aria-live="polite">
+            <div id="load-rules"><span>1</span><div><b>计算品类清单</b><small>排除已有物品，检查床型、炉具和优先级</small></div><em>处理中</em></div>
+            <div id="load-products"><span>2</span><div><b>查询重点商品</b><small>最多 5 个高价格或高规格风险品类</small></div><em>等待</em></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-results" class="page" data-page="results" aria-labelledby="results-title" hidden>
+        <div class="page-heading result-heading">
+          <div><p class="eyebrow">步骤 3 / 3</p><h1 id="results-title">你的第一周采购方案</h1><p id="result-subtitle">品类是主信息，商品候选只是可追溯的辅助事实。</p></div>
+          <span id="budget-status" class="status-pill"></span>
+        </div>
+
+        <div class="metrics" aria-label="预算概览">
+          <div><span>英国采购预算</span><strong id="metric-budget">—</strong></div>
+          <div><span>预计英国支出</span><strong id="metric-spend">—</strong></div>
+          <div><span>剩余金额</span><strong id="metric-left">—</strong></div>
+          <div><span id="metric-count-label">本周行动</span><strong id="metric-count">—</strong></div>
+        </div>
+
+        <div class="budget-card">
+          <div class="budget-card-head"><div><p class="eyebrow">唯一后续调整</p><h2>改变总预算</h2></div><div class="budget-entry"><span>£</span><input id="adjust-budget" type="number" min="40" max="500" step="1" aria-label="调整后的总预算"></div></div>
+          <input id="budget-range" type="range" min="40" max="300" step="5" aria-label="预算滑块">
+          <div class="range-labels"><span>£40</span><span>£300</span></div>
+          <div id="budget-diff" class="budget-diff" aria-live="polite"></div>
+        </div>
+
+        <div id="insufficient-notice" class="notice danger" hidden></div>
+        <div id="fact-notice" class="notice info"></div>
+        <div id="stage-summary" class="stage-summary" aria-label="购买阶段概览"></div>
+
+        <div class="result-layout">
+          <div>
+            <div class="section-heading"><div><p class="eyebrow">确定性规则结果</p><h2>采购清单</h2></div><div class="list-controls"><label><span class="sr-only">筛选清单</span><select id="list-filter"><option value="all">全部购买阶段</option><option value="domestic">国内带</option><option value="uk">英国买</option><option value="verify">待核实</option><option value="deferred">以后再买</option></select></label></div></div>
+            <div id="shopping-list" class="shopping-list" aria-live="polite"></div>
+          </div>
+          <aside>
+            <div class="section-heading"><div><p class="eyebrow">外部商品事实</p><h2>重点商品候选</h2></div></div>
+            <div id="product-panel" class="product-panel"></div>
+          </aside>
+        </div>
+
+        <div class="split-actions bottom-actions">
+          <button class="secondary-button" type="button" data-route="facilities">← 返回修改</button>
+          <button id="copy-summary" class="secondary-button" type="button">复制清单摘要</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="ai-settings-layer" class="settings-layer" hidden>
+    <button class="settings-backdrop" type="button" data-close-ai-settings aria-label="关闭AI设置"></button>
+    <section class="settings-drawer" role="dialog" aria-modal="true" aria-labelledby="ai-settings-title">
+      <header class="settings-drawer-head">
+        <div><p class="eyebrow">运行配置</p><h2 id="ai-settings-title">AI 来源与模型设置</h2><p>选择合同与自由文本解析使用的来源。采购规则和预算计算始终由本地确定性代码处理。</p></div>
+        <button id="ai-settings-close" class="drawer-close" type="button" data-close-ai-settings aria-label="关闭">×</button>
+      </header>
+
+      <form id="ai-settings-form" class="settings-form">
+        <fieldset class="source-fieldset">
+          <legend><span>选择 AI 来源</span><small>仅影响需要语义理解的任务</small></legend>
+          <div class="source-options">
+            <label class="source-option" data-source-card="gemini">
+              <input type="radio" name="aiSource" value="gemini">
+              <span class="source-icon gemini" aria-hidden="true">✦</span>
+              <span class="source-copy"><b>Google Gemini API</b><small>免费额度优先；解析 PDF、图片、合同文字和已携带物品</small></span>
+              <span id="gemini-source-badge" class="source-badge">检查中</span>
+            </label>
+            <label class="source-option" data-source-card="openai">
+              <input type="radio" name="aiSource" value="openai">
+              <span class="source-icon openai" aria-hidden="true">◎</span>
+              <span class="source-copy"><b>OpenAI API</b><small>真实解析 PDF、图片、合同文字和已携带物品</small></span>
+              <span id="openai-source-badge" class="source-badge">检查中</span>
+            </label>
+            <label class="source-option" data-source-card="codex">
+              <input type="radio" name="aiSource" value="codex" disabled>
+              <span class="source-icon codex" aria-hidden="true">⌘</span>
+              <span class="source-copy"><b>Codex 桌面 Agent</b><small>可辅助开发与测试，但普通网页不能把桌面 Agent 当作线上 API</small></span>
+              <span class="source-badge unavailable">开发辅助</span>
+            </label>
+            <label class="source-option" data-source-card="demo">
+              <input type="radio" name="aiSource" value="demo">
+              <span class="source-icon demo" aria-hidden="true">▷</span>
+              <span class="source-copy"><b>演示模式</b><small>无需密钥；支持手动填写和粘贴文字，不解析 PDF 或图片</small></span>
+              <span class="source-badge demo">免费</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <section id="model-settings" class="model-settings" aria-labelledby="model-settings-title">
+          <div><p class="eyebrow">模型设置</p><h3 id="model-settings-title">合同理解模型</h3></div>
+          <label id="ai-model-label" for="ai-model">AI 模型</label>
+          <select id="ai-model" name="aiModel">
+            <option value="gpt-5-mini">gpt-5-mini · 当前默认</option>
+            <option value="gpt-5.4-mini">gpt-5.4-mini · 可选</option>
+          </select>
+          <p>模型只提取材料中有依据的信息，并返回结构化字段、置信度和原文证据；缺失信息必须为“不确定”。</p>
+        </section>
+
+        <div id="ai-connection-status" class="connection-status" role="status" aria-live="polite">
+          <b>正在检查连接</b><span>请稍候…</span>
+        </div>
+        <button id="test-ai-connection" class="secondary-button wide-button" type="button">测试当前连接</button>
+
+        <footer class="settings-actions">
+          <button class="secondary-button" type="button" data-close-ai-settings>取消</button>
+          <button class="primary-button" type="submit">保存设置</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script>
+const FACILITY_GROUPS = [
+  {
+    id: "bedroom",
+    label: "卧室",
+    icon: "床",
+    fields: [
+      { id: "mattress", label: "床垫", options: [["yes", "有"], ["no", "没有"], ["unknown", "不确定"]], defaultValue: "yes" },
+      { id: "pillow", label: "枕头", options: [["no", "没有"], ["yes", "有"], ["unknown", "不确定"]], defaultValue: "no" },
+      { id: "desk_lamp", label: "台灯", options: [["unknown", "不确定"], ["yes", "有"], ["no", "没有"]], defaultValue: "unknown" }
+    ]
+  },
+  {
+    id: "kitchen",
+    label: "厨房",
+    icon: "锅",
+    fields: [
+      { id: "microwave", label: "微波炉", options: [["yes", "有"], ["no", "没有"], ["unknown", "不确定"]], defaultValue: "yes" },
+      { id: "kettle", label: "电热水壶", options: [["yes", "有"], ["no", "没有"], ["unknown", "不确定"]], defaultValue: "yes" },
+      { id: "stovetop", label: "炉灶类型", options: [["induction", "电磁炉"], ["electric", "普通电炉"], ["unknown", "不确定"]], defaultValue: "induction" },
+      { id: "dishwasher", label: "洗碗机", options: [["unknown", "不确定"], ["yes", "有"], ["no", "没有"]], defaultValue: "unknown" },
+      { id: "kitchen_storage", label: "个人厨房储物", options: [["unknown", "不确定"], ["limited", "很有限"], ["normal", "一般 / 充足"]], defaultValue: "unknown" }
+    ]
+  },
+  {
+    id: "bathroom",
+    label: "卫浴",
+    icon: "浴",
+    fields: [
+      { id: "bathroom", label: "卫浴类型", options: [["private", "独立卫浴"], ["shared", "公共卫浴"], ["unknown", "不确定"]], defaultValue: "private" },
+      { id: "bathroom_bin", label: "浴室垃圾桶", options: [["no", "没有"], ["yes", "有"], ["unknown", "不确定"]], defaultValue: "no" },
+      { id: "bathroom_storage", label: "浴室收纳", options: [["no", "没有"], ["yes", "有"], ["unknown", "不确定"]], defaultValue: "no" }
+    ]
+  },
+  {
+    id: "shared",
+    label: "公共设施",
+    icon: "舍",
+    fields: [
+      { id: "laundry", label: "洗衣房", options: [["yes", "有"], ["no", "没有"], ["unknown", "不确定"]], defaultValue: "yes" },
+      { id: "vacuum", label: "吸尘器", options: [["unknown", "不确定"], ["yes", "有"], ["no", "没有"]], defaultValue: "unknown" },
+      { id: "drying", label: "晾衣设施", options: [["no", "没有"], ["yes", "有"], ["unknown", "不确定"]], defaultValue: "no" }
+    ]
+  }
+];
+
+const CATALOG = [
+  { id: "bedding_duvet", zh: "被芯", en: "Duvet", category: "床品", priority: "P0", price: 22, bedDependent: true, searchRisk: 3, spec: "bed_size,tog" },
+  { id: "bedding_fitted_sheet", zh: "床笠", en: "Fitted sheet", category: "床品", priority: "P0", price: 9, bedDependent: true, searchRisk: 2, spec: "bed_size" },
+  { id: "bedding_pillow", zh: "枕头", en: "Pillow", category: "床品", priority: "P0", price: 8, providedBy: "pillow", searchRisk: 0 },
+  { id: "bedding_pillowcase", zh: "枕套", en: "Pillowcase", category: "床品", priority: "P0", price: 4, bedDependent: false, carryMode: "optional-domestic", carryBulk: 1, searchRisk: 0 },
+  { id: "bedding_mattress_protector", zh: "床垫保护套", en: "Mattress protector", category: "床品", priority: "P1", price: 12, bedDependent: true, searchRisk: 2, spec: "bed_size" },
+  { id: "bath_towel", zh: "浴巾", en: "Bath towel", category: "卫浴", priority: "P0", price: 7, carryMode: "prefer-domestic", carryBulk: 2, searchRisk: 0 },
+  { id: "toiletries", zh: "常用洗漱用品", en: "Essential toiletries", category: "卫浴", priority: "P0", price: 9, carryMode: "prefer-domestic", carryBulk: 1, searchRisk: 0 },
+  { id: "electric_extension", zh: "英标插线板", en: "UK extension lead", category: "电器", priority: "P0", price: 12, searchRisk: 3, spec: "uk_plug" },
+  { id: "electric_adapter", zh: "英标转换插头", en: "UK travel adaptor", category: "电器", priority: "P0", price: 8, carryMode: "prefer-domestic", carryBulk: 1, searchRisk: 2, spec: "uk_plug,voltage" },
+  { id: "clean_laundry_detergent", zh: "洗衣液", en: "Laundry detergent", category: "清洁", priority: "P0", price: 5, searchRisk: 0 },
+  { id: "kitchen_cutlery", zh: "基础餐具", en: "Cutlery set", category: "厨房", priority: "P1", price: 5, carryMode: "optional-domestic", carryBulk: 1, quantityByGuests: { none: 1, "one-two": 2, "three-plus": 4 }, searchRisk: 0 },
+  { id: "kitchen_bowl_mug", zh: "碗杯组合", en: "Bowl and mug set", category: "厨房", priority: "P0", price: 6, quantityByGuests: { none: 1, "one-two": 2, "three-plus": 4 }, searchRisk: 0 },
+  { id: "kitchen_kettle", zh: "电热水壶", en: "Electric kettle", category: "厨房", priority: "P1", price: 16, providedBy: "kettle", onlyWhenFacilityMissing: true, searchRisk: 2, spec: "uk_plug,voltage" },
+  { id: "kitchen_frying_pan", zh: "煎锅", en: "Frying pan", category: "厨房", priority: "P1", price: 15, cooking: ["sometimes", "daily"], stovetopDependent: true, searchRisk: 3, spec: "hob_compatibility" },
+  { id: "kitchen_saucepan", zh: "小汤锅", en: "Saucepan", category: "厨房", priority: "P1", price: 14, cooking: ["sometimes", "daily"], stovetopDependent: true, searchRisk: 3, spec: "hob_compatibility" },
+  { id: "clean_dish_soap", zh: "洗洁精", en: "Washing-up liquid", category: "清洁", priority: "P1", price: 2.5, cooking: ["sometimes", "daily"], searchRisk: 0 },
+  { id: "clean_sponges", zh: "清洁海绵", en: "Cleaning sponges", category: "清洁", priority: "P1", price: 3, carryMode: "optional-domestic", carryBulk: 1, searchRisk: 0 },
+  { id: "clean_bin_bags", zh: "垃圾袋", en: "Bin bags", category: "清洁", priority: "P1", price: 3, searchRisk: 0 },
+  { id: "living_hangers", zh: "衣架", en: "Clothes hangers", category: "生活", priority: "P1", price: 5, quantityByCooking: null, searchRisk: 0 },
+  { id: "bath_shower_caddy", zh: "便携洗漱篮", en: "Shower caddy", category: "卫浴", priority: "P1", price: 8, bathroom: "shared", searchRisk: 1 },
+  { id: "bathroom_bin", zh: "浴室垃圾桶", en: "Bathroom bin", category: "卫浴", priority: "P2", price: 6, providedBy: "bathroom_bin", onlyWhenFacilityMissing: true, searchRisk: 0 },
+  { id: "living_drying_rack", zh: "折叠晾衣架", en: "Folding drying rack", category: "生活", priority: "P2", price: 18, providedBy: "drying", onlyWhenFacilityMissing: true, searchRisk: 2 },
+  { id: "living_desk_lamp", zh: "桌面台灯", en: "Desk lamp", category: "生活", priority: "P2", price: 14, providedBy: "desk_lamp", onlyWhenFacilityMissing: true, searchRisk: 1, spec: "uk_plug,voltage" },
+  { id: "living_slippers", zh: "宿舍拖鞋", en: "Indoor slippers", category: "生活", priority: "P2", price: 6, carryMode: "prefer-domestic", carryBulk: 1, searchRisk: 0 },
+  { id: "bath_storage", zh: "浴室收纳盒", en: "Bathroom storage basket", category: "卫浴", priority: "P2", price: 9, providedBy: "bathroom_storage", onlyWhenFacilityMissing: true, searchRisk: 0 }
+];
+
+const ITEM_INDEX = Object.fromEntries(CATALOG.map((item) => [item.id, item]));
+
+const ROOM_TYPES = {
+  "ensuite-small-double": { room: "En-suite", bed: "Small Double", query: "small double" },
+  "studio-double": { room: "Studio", bed: "Double", query: "double" },
+  "shared-single": { room: "Shared flat", bed: "Single", query: "single" },
+  "shared-bath-single": { room: "Shared bathroom", bed: "Single", query: "single" },
+  "twin-single": { room: "Twin room", bed: "Single", query: "single" },
+  unknown: { room: "待核实", bed: "待核实", query: "" }
+};
+
+const BED_SIZES = {
+  single: { label: "Single", dimensions: "约 90 × 190cm", query: "single" },
+  "small-double": { label: "Small Double", dimensions: "约 120 × 190cm", query: "small double" },
+  double: { label: "Double", dimensions: "约 135 × 190cm", query: "double" },
+  unknown: { label: "待核实", dimensions: "以住宿合同为准", query: "" }
+};
+
+const DOMESTIC_PREP_ITEMS = [
+  { id: "nail_clipper", label: "指甲刀" },
+  { id: "peeler", label: "削皮刀" },
+  { id: "projector", label: "投影仪" },
+  { id: "shopping_bags", label: "购物袋" },
+  { id: "phone_dry_bag", label: "手机防水袋" },
+  { id: "sewing_kit", label: "针线盒" },
+  { id: "tape_measure", label: "卷尺" },
+  { id: "elastic_band", label: "皮筋" },
+  { id: "rice_cooker", label: "电饭煲 / 压力锅" },
+  { id: "kettle", label: "烧水壶", catalogItemIds: ["kitchen_kettle"] },
+  { id: "filter_cartridge", label: "过滤花洒", remark: "先核对宿舍接口型号" },
+  { id: "water_filter", label: "滤水器" },
+  { id: "portable_cup", label: "便携式榨汁杯" },
+  { id: "phone_stand", label: "手机支架" },
+  { id: "filter_balls", label: "过滤花洒滤料" },
+  { id: "cleaning_rags", label: "抹布" },
+  { id: "water_cup", label: "水杯" },
+  { id: "adhesive_hooks", label: "粘钩" },
+  { id: "seasoning", label: "调味料" },
+  { id: "dinnerware_set", label: "餐具套装", catalogItemIds: ["kitchen_cutlery", "kitchen_bowl_mug"] },
+  { id: "thermos", label: "保温杯" },
+  { id: "knife", label: "小刀", transport: "仅托运", remark: "不能随身携带" },
+  { id: "repair_tools", label: "多功能五金维修工具", transport: "仅托运", remark: "螺丝刀等不能随身携带" },
+  { id: "tea", label: "茶叶" },
+  { id: "hand_warmer", label: "暖宝宝" },
+  { id: "pot", label: "锅", remark: "先确认炉灶兼容性，不自动排除英国锅具" },
+  { id: "bowls", label: "碗" },
+  { id: "spoons", label: "勺子" },
+  { id: "chopsticks", label: "筷子" },
+  { id: "wash_basin", label: "脸盆" },
+  { id: "hangers", label: "衣架", catalogItemIds: ["living_hangers"] },
+  { id: "hair_filter", label: "毛发过滤网" },
+  { id: "bin_bags", label: "垃圾袋", catalogItemIds: ["clean_bin_bags"] }
+].map((item) => ({ transport: "托运 / 海运", ...item }));
+
+function shoppingLinksFor({ category, query } = {}) {
+  const text = String(query || "").trim();
+  if (!text) return [];
+  const encoded = encodeURIComponent(text);
+  const argosSlug = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const providers = {
+    google: { label: "Google Shopping", url: `https://www.google.co.uk/search?tbm=shop&hl=en&gl=uk&q=${encoded}` },
+    argos: { label: "Argos", url: `https://www.argos.co.uk/search/${encodeURIComponent(argosSlug)}/` },
+    dunelm: { label: "Dunelm", url: `https://www.dunelm.com/search?q=${encoded}` },
+    ikea: { label: "IKEA UK", url: `https://www.ikea.com/gb/en/search/?q=${encoded}` },
+    amazon: { label: "Amazon UK", url: `https://www.amazon.co.uk/s?k=${encoded}` }
+  };
+  const byCategory = {
+    "床品": [providers.google, providers.dunelm, providers.argos],
+    "电器": [providers.google, providers.argos, providers.amazon],
+    "厨房": [providers.google, providers.argos, providers.ikea],
+    "清洁": [providers.google, providers.argos, providers.amazon],
+    "卫浴": [providers.google, providers.dunelm, providers.amazon],
+    "生活": [providers.google, providers.argos, providers.dunelm]
+  };
+  return byCategory[category] || [providers.google, providers.argos, providers.amazon];
+}
+
+
+
+const UNKNOWN_RECORD = Object.freeze({ value: "unknown", confidence: "low", evidence: "" });
+
+function record(value = "unknown", evidence = "", confidence = "low") {
+  return { value, evidence: String(evidence || "").trim().slice(0, 260), confidence };
+}
+
+function sentences(text) {
+  return String(text || "")
+    .split(/(?:\r?\n)+|(?<=[.!?。！？])\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function evidenceFor(parts, pattern) {
+  return parts.find((part) => pattern.test(part)) || "";
+}
+
+function firstMatch(parts, choices) {
+  for (const choice of choices) {
+    const evidence = evidenceFor(parts, choice.pattern);
+    if (evidence) return record(choice.value, evidence, choice.confidence || "high");
+  }
+  return record();
+}
+
+function emptyContractAnalysis({ source = "local-demo", fileName = "" } = {}) {
+  const facilities = Object.fromEntries(
+    FACILITY_GROUPS.flatMap((group) => group.fields.map((field) => [field.id, { ...UNKNOWN_RECORD }]))
+  );
+  return {
+    source,
+    fileName,
+    analyzedAt: new Date().toISOString(),
+    profile: { roomType: { ...UNKNOWN_RECORD }, bedSize: { ...UNKNOWN_RECORD } },
+    facilities
+  };
+}
+
+function parseContractLocally(text, { fileName = "粘贴的合同文字" } = {}) {
+  const parts = sentences(text);
+  const result = emptyContractAnalysis({ source: "local-demo", fileName });
+
+  result.profile.roomType = firstMatch(parts, [
+    { value: "twin-single", pattern: /\b(twin room|two single beds?)\b|双人间|双床房/i },
+    { value: "studio-double", pattern: /\bstudio\b|单间公寓/i },
+    { value: "shared-bath-single", pattern: /\bshared bathroom\b|公共卫浴/i },
+    { value: "ensuite-small-double", pattern: /\b(en[- ]?suite|private bathroom)\b|独立卫浴/i },
+    { value: "shared-single", pattern: /\b(shared flat|shared kitchen)\b|合租公寓|共享厨房/i, confidence: "medium" }
+  ]);
+  result.profile.bedSize = firstMatch(parts, [
+    { value: "small-double", pattern: /\b(small double|4\s*ft(?:\s*bed)?|120\s*[×x]\s*190)\b|小双人床/i },
+    { value: "double", pattern: /\b(double bed|4\s*ft\s*6|135\s*[×x]\s*190)\b|双人床/i },
+    { value: "single", pattern: /\b(single bed|3\s*ft(?:\s*bed)?|90\s*[×x]\s*190)\b|单人床/i }
+  ]);
+
+  const facilityRules = {
+    mattress: [
+      { value: "no", pattern: /\b(no|without)\s+(?:a\s+)?mattress\b|不提供床垫/i },
+      { value: "yes", pattern: /\b(mattress (?:is )?provided|includes? (?:a )?mattress|bed and mattress)\b|提供床垫/i }
+    ],
+    pillow: [
+      { value: "no", pattern: /\b(no|without)\s+(?:a\s+)?pillow\b|\bpillows? (?:is|are) not provided\b|不提供枕头/i },
+      { value: "yes", pattern: /\bpillows? (?:is|are)?\s*provided\b|提供枕头/i }
+    ],
+    desk_lamp: [
+      { value: "no", pattern: /\b(no|without)\s+(?:a\s+)?desk lamp\b|不提供台灯/i },
+      { value: "yes", pattern: /\bdesk lamp (?:is )?provided\b|提供台灯/i }
+    ],
+    microwave: [
+      { value: "no", pattern: /\b(no|without)\s+(?:a\s+)?microwave\b|没有微波炉/i },
+      { value: "yes", pattern: /\b(?:includes?|provided with|equipped with)[^.!?]{0,80}\bmicrowave\b|\bmicrowave (?:is )?(?:provided|included|available)\b|提供微波炉/i }
+    ],
+    kettle: [
+      { value: "no", pattern: /\b(no|without)\s+(?:a\s+)?kettle\b|没有(?:电)?热水壶/i },
+      { value: "yes", pattern: /\b(?:includes?|provided with|equipped with)[^.!?]{0,80}\bkettle\b|\bkettle (?:is )?(?:provided|included|available)\b|提供(?:电)?热水壶/i }
+    ],
+    stovetop: [
+      { value: "induction", pattern: /\b(induction hob|induction cooking rings?)\b|电磁炉/i },
+      { value: "electric", pattern: /\b(electric hob|electric cooking rings?|ceramic hob)\b|普通电炉|陶瓷炉/i }
+    ],
+    dishwasher: [
+      { value: "unknown", pattern: /\b(?:does not|doesn't|did not) mention[^.!?]*\bdishwasher\b|未提及洗碗机/i, confidence: "low" },
+      { value: "no", pattern: /\b(no|without)\s+(?:a\s+)?dishwasher\b|没有洗碗机/i },
+      { value: "yes", pattern: /\b(?:includes?|provided with|equipped with)[^.!?]{0,80}\bdishwasher\b|\bdishwasher (?:is )?(?:provided|included|available)\b|提供洗碗机/i }
+    ],
+    kitchen_storage: [
+      { value: "limited", pattern: /\b(limited|minimal) (?:personal )?(?:kitchen )?storage\b|厨房储物空间有限/i },
+      { value: "normal", pattern: /\b(personal|individual) (?:kitchen )?(?:cupboard|storage)\b|独立厨房储物/i, confidence: "medium" }
+    ],
+    bathroom: [
+      { value: "private", pattern: /\b(en[- ]?suite|private bathroom)\b|独立卫浴/i },
+      { value: "shared", pattern: /\bshared bathroom\b|公共卫浴/i }
+    ],
+    bathroom_bin: [
+      { value: "no", pattern: /\b(no|without)\s+(?:a\s+)?bathroom bin\b|没有浴室垃圾桶/i },
+      { value: "yes", pattern: /\bbathroom bin (?:is )?provided\b|提供浴室垃圾桶/i }
+    ],
+    bathroom_storage: [
+      { value: "no", pattern: /\b(no|without)\s+bathroom storage\b|没有浴室收纳/i },
+      { value: "yes", pattern: /\bbathroom (?:cabinet|storage) (?:is )?provided\b|提供浴室收纳/i }
+    ],
+    laundry: [
+      { value: "no", pattern: /\b(no|without)\s+(?:on-site )?laundry\b|没有洗衣房/i },
+      { value: "yes", pattern: /\b(laundry room|launderette|on-site laundry)\b|洗衣房/i }
+    ],
+    vacuum: [
+      { value: "unknown", pattern: /\b(?:does not|doesn't|did not) mention[^.!?]*\bvacuum\b|未提及吸尘器/i, confidence: "low" },
+      { value: "no", pattern: /\b(no|without)\s+(?:a\s+)?vacuum\b|没有吸尘器/i },
+      { value: "yes", pattern: /\bvacuum (?:cleaner )?(?:is )?(?:provided|available)\b|提供吸尘器/i }
+    ],
+    drying: [
+      { value: "unknown", pattern: /\b(?:does not|doesn't|did not) mention[^.!?]*\b(drying rack|clothes airer|drying facilities)\b|未提及晾衣设施/i, confidence: "low" },
+      { value: "no", pattern: /\b(no|without)\s+(?:a\s+)?drying rack\b|没有晾衣设施/i },
+      { value: "yes", pattern: /\b(drying rack|clothes airer|drying facilities)\b|晾衣设施/i }
+    ]
+  };
+
+  for (const [fieldId, choices] of Object.entries(facilityRules)) {
+    result.facilities[fieldId] = firstMatch(parts, choices);
+  }
+  return result;
+}
+
+function contractAnalysisCount(analysis) {
+  if (!analysis) return 0;
+  const records = [analysis.profile?.roomType, analysis.profile?.bedSize, ...Object.values(analysis.facilities || {})];
+  return records.filter((item) => item?.value && item.value !== "unknown").length;
+}
+
+
+
+const PRIORITY_ORDER = { P0: 0, P1: 1, P2: 2 };
+const CARRIED_RULES = [
+  { id: "bedding_set", patterns: ["完整床品", "床品四件套", "四件套", "complete bedding", "bedding set"], expands: ["bedding_duvet", "bedding_fitted_sheet", "bedding_pillowcase"] },
+  { id: "thin_blanket", patterns: ["薄毯子", "薄毯", "毛毯", "blanket", "throw"], ambiguous: true, label: "薄毯子（不能确认等同冬季被芯）" },
+  { id: "bedding_duvet", patterns: ["被芯", "羽绒被", "冬被", "duvet"] },
+  { id: "bedding_fitted_sheet", patterns: ["床笠", "床单", "fitted sheet", "bedsheet"] },
+  { id: "bedding_pillow", patterns: ["枕头", "pillow"] },
+  { id: "bedding_pillowcase", patterns: ["枕套", "pillowcase"] },
+  { id: "bath_towel", patterns: ["浴巾", "毛巾", "bath towel", "towel"] },
+  { id: "toiletries", patterns: ["洗漱用品", "洗护用品", "toiletries", "toothbrush", "牙刷", "洗发水"] },
+  { id: "electric_extension", patterns: ["插线板", "排插", "extension lead", "power strip"] },
+  { id: "electric_adapter", patterns: ["转换插头", "转接头", "旅行转换器", "travel adaptor", "travel adapter"] },
+  { id: "clean_laundry_detergent", patterns: ["洗衣液", "洗衣粉", "laundry detergent"] },
+  { id: "kitchen_cutlery", patterns: ["餐具", "刀叉", "cutlery"] },
+  { id: "kitchen_bowl_mug", patterns: ["碗", "杯子", "mug", "bowl"] },
+  { id: "kitchen_kettle", patterns: ["热水壶", "烧水壶", "kettle"] },
+  { id: "kitchen_frying_pan", patterns: ["煎锅", "平底锅", "frying pan"] },
+  { id: "kitchen_saucepan", patterns: ["汤锅", "奶锅", "saucepan"] },
+  { id: "living_hangers", patterns: ["衣架", "hangers"] },
+  { id: "living_drying_rack", patterns: ["晾衣架", "drying rack", "airer"] },
+  { id: "living_desk_lamp", patterns: ["台灯", "desk lamp"] },
+  { id: "living_slippers", patterns: ["拖鞋", "slippers"] }
+];
+
+const unique = (values) => [...new Set(values)];
+const money = (value) => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+const roundHalf = (value) => Math.max(0.5, Math.round(Number(value) * 2) / 2);
+const kgText = (value) => Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, "");
+
+function suitcaseText(value) {
+  if (value === 0.25) return "1/4个箱子";
+  if (value === 0.5) return "半个箱子";
+  if (value === 0.75) return "3/4个箱子";
+  return `${Number.isInteger(value) ? value : value.toFixed(1).replace(/\.0$/, "")}个箱子`;
+}
+
+function calculateLuggageBands(profile = {}) {
+  const checkedBagCount = Math.min(4, Math.max(1, Number(profile.checkedBagCount) || 2));
+  const checkedBagKg = Math.min(32, Math.max(15, Number(profile.checkedBagKg) || 23));
+  const carryOnCount = Math.min(2, Math.max(0, Number(profile.carryOnCount) || 0));
+  const checkedTotalKg = money(checkedBagCount * checkedBagKg);
+  // 生活用品空间按全部托运行李的占比表达，公斤数只是辅助换算。
+  // 三档分别覆盖总额度的 25%—50%、50%—75% 和 75%—100%。
+  const quarterKg = roundHalf(checkedTotalKg * 0.25);
+  const halfKg = roundHalf(checkedTotalKg * 0.5);
+  const threeQuarterKg = roundHalf(checkedTotalKg * 0.75);
+  const fullKg = checkedTotalKg;
+  const quarterBags = checkedBagCount * 0.25;
+  const halfBags = checkedBagCount * 0.5;
+  const threeQuarterBags = checkedBagCount * 0.75;
+  const fullBags = checkedBagCount;
+  return {
+    checkedBagCount,
+    checkedBagKg,
+    carryOnCount,
+    checkedTotalKg,
+    quarterKg,
+    halfKg,
+    threeQuarterKg,
+    fullKg,
+    allowanceLabel: `${checkedBagCount} × ${checkedBagKg}kg${carryOnCount ? ` + ${carryOnCount} 件随身行李` : ""}`,
+    allowanceSummary: `托运行李共 ${checkedTotalKg}kg（${checkedBagCount} 件，每件 ${checkedBagKg}kg）；下方按生活用品占全部托运行李的比例估算。`,
+    options: {
+      unknown: { title: "还没开始整理 / 不确定", detail: "采用保守方案，只建议国内带转换插头、常用个人用品等极小件。" },
+      tight: { title: `生活用品占少部分：约${suitcaseText(quarterBags)}—${suitcaseText(halfBags)}`, detail: `按当前总额度约${kgText(quarterKg)}—${kgText(halfKg)}kg（25%—50%）；优先安排国内更熟悉、落地急用的物品。` },
+      medium: { title: `生活用品约占一半以上：约${suitcaseText(halfBags)}—${suitcaseText(threeQuarterBags)}`, detail: `按当前总额度约${kgText(halfKg)}—${kgText(threeQuarterKg)}kg（50%—75%）；可带床品小件、洗漱用品和基础餐具。` },
+      roomy: { title: `生活用品是行李主体：约${suitcaseText(threeQuarterBags)}—${suitcaseText(fullBags)}`, detail: `按当前总额度约${kgText(threeQuarterKg)}—${kgText(fullKg)}kg（75%—100%）；大件仍需比较体积、规格和英国购买成本。` }
+    }
+  };
+}
+
+function defaultFacilities() {
+  return {
+    mattress: "yes", pillow: "no", desk_lamp: "unknown",
+    microwave: "yes", kettle: "yes", stovetop: "induction", dishwasher: "unknown", kitchen_storage: "unknown",
+    bathroom: "private", bathroom_bin: "no", bathroom_storage: "no",
+    laundry: "yes", vacuum: "unknown", drying: "no"
+  };
+}
+
+function validateProfile(profile) {
+  const errors = {};
+  if (!ROOM_TYPES[profile.roomType]) errors.roomType = "请选择宿舍房型。";
+  if (!BED_SIZES[profile.bedSize]) errors.bedSize = "请选择或确认床的大小。";
+  if (!["within-7", "8-14", "over-14", "moved-in"].includes(profile.moveIn)) errors.moveIn = "请选择入住时间。";
+  const budget = Number(profile.budget);
+  if (!Number.isFinite(budget)) errors.budget = "请输入第一周总预算。";
+  else if (budget < 40 || budget > 500) errors.budget = "预算需在 £40—£500 之间。";
+  if (!["rarely", "sometimes", "daily"].includes(profile.cooking)) errors.cooking = "请选择做饭频率。";
+  if (!["china", "uk"].includes(profile.location)) errors.location = "请选择当前所在位置。";
+  if (!["2x23", "1x23", "2x20", "custom"].includes(profile.luggagePreset)) errors.luggageAllowance = "请选择或填写行李额度。";
+  const bagCount = Number(profile.checkedBagCount);
+  const bagKg = Number(profile.checkedBagKg);
+  const carryCount = Number(profile.carryOnCount);
+  if (!Number.isInteger(bagCount) || bagCount < 1 || bagCount > 4 || !Number.isFinite(bagKg) || bagKg < 15 || bagKg > 32 || !Number.isInteger(carryCount) || carryCount < 0 || carryCount > 2) errors.luggageAllowance = "托运行李需为 1—4 件、每件 15—32kg，随身行李为 0—2 件。";
+  if (!["unknown", "tight", "medium", "roomy"].includes(profile.luggageSpace)) errors.luggageSpace = "请选择可用于生活用品的行李空间。";
+  const preparationValues = [profile.preparedFittedSheet, profile.preparedFlatSheet, profile.preparedPillow, profile.preparedPillowcase];
+  if (preparationValues.some((value) => !["yes", "no", "unknown"].includes(value))) errors.beddingPreparation = "请确认床笠、床单、枕头和枕套的准备情况。";
+  if (profile.preparedDomestic !== undefined && !Array.isArray(profile.preparedDomestic)) errors.preparedDomestic = "其他已准备物品的格式无效。";
+  if (!["none", "one-two", "three-plus"].includes(profile.guestCount)) errors.guestCount = "请选择常见招待人数。";
+  if ((profile.carriedText || "").length > 500) errors.carriedText = "已携带物品不能超过 500 字。";
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
+function parseCarriedItems(text = "") {
+  const normalized = String(text).toLowerCase().normalize("NFKC");
+  if (!normalized.trim()) return { items: [], ambiguous: [], unmatched: [], source: "local-rules" };
+  const matches = [];
+  const ambiguous = [];
+  for (const rule of CARRIED_RULES) {
+    const matchedText = rule.patterns.find((pattern) => normalized.includes(pattern.toLowerCase()));
+    if (!matchedText) continue;
+    const record = {
+      itemId: rule.id,
+      matchedText,
+      confidence: rule.ambiguous ? 0.55 : 0.96,
+      expands: rule.expands || [],
+      label: rule.label || ITEM_INDEX[rule.id]?.zh || rule.id
+    };
+    if (rule.ambiguous) ambiguous.push(record);
+    else matches.push(record);
+  }
+  const deduped = [...new Map(matches.map((item) => [item.itemId, item])).values()];
+  const tokens = normalized.split(/[，,、；;。\n/]+/).map((value) => value.trim()).filter(Boolean);
+  const unmatched = tokens.filter((token) => !CARRIED_RULES.some((rule) => rule.patterns.some((pattern) => token.includes(pattern.toLowerCase()))));
+  return { items: deduped, ambiguous, unmatched: unique(unmatched).slice(0, 8), source: "local-rules" };
+}
+
+function sanitizeParsedItems(parsed) {
+  const allowedSpecial = new Set(["bedding_set", "thin_blanket"]);
+  const validRecord = (record) => record && typeof record === "object" && (ITEM_INDEX[record.itemId] || allowedSpecial.has(record.itemId));
+  return {
+    items: Array.isArray(parsed?.items) ? parsed.items.filter(validRecord).map((item) => ({ ...item, expands: item.itemId === "bedding_set" ? ["bedding_duvet", "bedding_fitted_sheet", "bedding_pillowcase"] : [] })) : [],
+    ambiguous: Array.isArray(parsed?.ambiguous) ? parsed.ambiguous.filter(validRecord) : [],
+    unmatched: Array.isArray(parsed?.unmatched) ? parsed.unmatched.filter((item) => typeof item === "string").slice(0, 8) : [],
+    source: parsed?.source === "openai" ? "openai" : "local-rules"
+  };
+}
+
+function carriedIds(parsed) {
+  const ids = [];
+  for (const item of parsed.items || []) {
+    if (ITEM_INDEX[item.itemId]) ids.push(item.itemId);
+    if (Array.isArray(item.expands)) ids.push(...item.expands.filter((id) => ITEM_INDEX[id]));
+  }
+  return new Set(ids);
+}
+
+function shouldInclude(item, profile, facilities) {
+  if (item.cooking && !item.cooking.includes(profile.cooking)) return false;
+  if (item.bathroom && facilities.bathroom !== item.bathroom) return false;
+  if (item.onlyWhenFacilityMissing && item.providedBy && facilities[item.providedBy] === "yes") return false;
+  return true;
+}
+
+function queryFor(item, profile, facilities) {
+  const bed = BED_SIZES[profile.bedSize] || BED_SIZES.unknown;
+  let query = item.en;
+  if (item.bedDependent && bed.query) query = `${bed.query} ${query}`;
+  if (item.stovetopDependent && facilities.stovetop === "induction") query = `induction compatible ${query}`;
+  if (item.id === "bedding_duvet") query += " 10.5 tog";
+  if (item.spec?.includes("uk_plug")) query += " UK plug";
+  return query;
+}
+
+function stateAndReason(item, profile, facilities) {
+  const bed = BED_SIZES[profile.bedSize] || BED_SIZES.unknown;
+  const preparation = beddingPreparationState(item, profile);
+  if (preparation === "unknown") {
+    return { state: "verify", verifyStage: "出发前核实", reason: "是否已经装入行李尚不确定，出发前整理时先核对。", specWarning: "床品准备状态待确认。" };
+  }
+  if (item.bedDependent && profile.bedSize === "unknown") {
+    return { state: "verify", reason: "床型尚未确认，先查看合同或联系宿舍。", specWarning: "床型待核实；不能标记为已校验。" };
+  }
+  if (item.stovetopDependent && facilities.stovetop === "unknown") {
+    return { state: "verify", reason: "炉灶类型不确定，入住后确认再购买。", specWarning: "需要核实炉具兼容性。" };
+  }
+  if (item.providedBy && facilities[item.providedBy] === "unknown") {
+    return { state: "verify", reason: "宿舍是否提供尚不确定，入住后先核实。", specWarning: "设施信息不足。" };
+  }
+  if (item.stovetopDependent && facilities.stovetop === "induction") {
+    return { state: "candidate", reason: "你计划做饭，且炉灶为电磁炉。", specWarning: "只保留明确标注 induction compatible 的候选。" };
+  }
+  if (item.bedDependent) {
+    return { state: "candidate", reason: `按 ${bed.label}（${bed.dimensions}）生成英国搜索词。`, specWarning: item.id === "bedding_duvet" ? `${bed.label} 尺寸；被芯另需核对 Tog。` : `${bed.label} 尺寸需与商品字段一致。` };
+  }
+  if (item.id === "bath_shower_caddy") return { state: "candidate", reason: "公共卫浴提高了便携洗漱篮优先级。", specWarning: "" };
+  if (item.providedBy) return { state: "candidate", reason: "宿舍明确未提供，因此加入候选。", specWarning: item.spec ? "购买前核对英国规格。" : "" };
+  if (item.cooking) return { state: "candidate", reason: profile.cooking === "daily" ? "你基本每天做饭，保留基础厨房用品。" : "你每周做饭 3—5 次，保留基础厨房用品。", specWarning: "" };
+  if (item.id === "electric_adapter" && profile.location === "china") return { state: "candidate", reason: "仍在国内，可优先从现有行李中准备。", specWarning: "英国 Type G 插头；同时核对设备电压。" };
+  return { state: "candidate", reason: item.priority === "P0" ? "属于入住第一周的基础必需品。" : item.priority === "P1" ? "第一周建议准备。" : "舒适度物品，可在预算紧张时延后。", specWarning: item.spec ? "购买前核对英国规格。" : "" };
+}
+
+function purchaseDecision(item, profile, status) {
+  if (status.state === "verify") return { stage: status.verifyStage || "入住后核实", channel: status.verifyStage === "出发前核实" ? "整理行李时核对" : "先核实住宿或规格", budgetCost: 0, note: "信息未确认前不建议下单。" };
+  if (profile.location === "uk") return { stage: "英国买", channel: "英国零售渠道", budgetCost: item.price, note: "你已经到英国，国内携带不再是可执行的下一步。" };
+  const conservativeCarry = profile.luggageSpace === "unknown" && item.carryMode === "prefer-domestic" && item.carryBulk === 1 && item.priority === "P0";
+  const tightCarry = profile.luggageSpace === "tight" && item.carryMode === "prefer-domestic" && item.carryBulk === 1;
+  const standardCarry = ["medium", "roomy"].includes(profile.luggageSpace) && item.carryMode === "prefer-domestic";
+  const canCarryPreferred = conservativeCarry || tightCarry || standardCarry;
+  const canCarryOptional = item.carryMode === "optional-domestic" && profile.luggageSpace === "roomy";
+  if (canCarryPreferred || canCarryOptional) {
+    const bands = calculateLuggageBands(profile);
+    const electricalNote = item.spec?.includes("uk_plug") ? "出发前确认是英国 Type G 规格且电压适配。" : "体积较小，可减少落地后的零散采购。";
+    const allowanceNote = `当前额度为 ${bands.allowanceLabel}，生活用品空间按“${bands.options[profile.luggageSpace].title}”执行。`;
+    return { stage: "国内带", channel: "出发前装入行李", budgetCost: 0, note: `${electricalNote}${allowanceNote}` };
+  }
+  let note = "在英国购买，避免占用行李空间。";
+  if (item.bedDependent) note = "床品受英国床型尺寸影响，确认尺寸后在英国购买更稳妥。";
+  else if (item.stovetopDependent) note = "锅具需匹配现场炉灶，适合在英国确认兼容后购买。";
+  else if (item.spec?.includes("uk_plug")) note = "电器需核对英国插头、电压和住宿限制，建议在英国购买。";
+  else if (profile.luggageSpace === "tight") note = "行李空间紧张，改为英国落地购买。";
+  return { stage: "英国买", channel: "英国零售渠道", budgetCost: item.price, note };
+}
+
+function beddingPreparationState(item, profile) {
+  if (item.id === "bedding_fitted_sheet") {
+    if (profile.preparedFittedSheet === "yes" || profile.preparedFlatSheet === "yes") return "yes";
+    if (profile.preparedFittedSheet === "unknown" || profile.preparedFlatSheet === "unknown") return "unknown";
+    return "no";
+  }
+  if (item.id === "bedding_pillow") return profile.preparedPillow;
+  if (item.id === "bedding_pillowcase") return profile.preparedPillowcase;
+  return "no";
+}
+
+function prepareBaseItems({ profile, facilities, parsedCarried }) {
+  const owned = carriedIds(parsedCarried);
+  const selectedPrep = new Set(Array.isArray(profile.preparedDomestic) ? profile.preparedDomestic : []);
+  for (const prepItem of DOMESTIC_PREP_ITEMS) {
+    if (!selectedPrep.has(prepItem.id)) continue;
+    for (const itemId of prepItem.catalogItemIds || []) owned.add(itemId);
+  }
+  const excluded = [];
+  const candidates = [];
+  for (const item of CATALOG) {
+    if (!shouldInclude(item, profile, facilities)) {
+      if (item.providedBy && facilities[item.providedBy] === "yes") excluded.push({ itemId: item.id, reason: "宿舍已提供" });
+      continue;
+    }
+    if (beddingPreparationState(item, profile) === "yes") {
+      excluded.push({ itemId: item.id, reason: item.id === "bedding_fitted_sheet" ? "用户已准备床笠或床单" : "用户已准备" });
+      continue;
+    }
+    if (owned.has(item.id)) {
+      excluded.push({ itemId: item.id, reason: "用户已携带" });
+      continue;
+    }
+    if (item.providedBy && facilities[item.providedBy] === "yes") {
+      excluded.push({ itemId: item.id, reason: "宿舍已提供" });
+      continue;
+    }
+    const quantity = item.quantityByGuests?.[profile.guestCount] || item.quantityByCooking?.[profile.cooking] || 1;
+    const status = stateAndReason(item, profile, facilities);
+    const purchase = purchaseDecision(item, profile, status);
+    const socialReason = item.quantityByGuests && profile.guestCount !== "none" ? `常见招待人数使建议数量调整为 ${quantity}。` : "";
+    const storageReason = item.stovetopDependent && facilities.kitchen_storage === "limited" ? "个人厨房储物有限，保持少量、多用途配置。" : "";
+    const dishwasherNote = ["kitchen_cutlery", "kitchen_bowl_mug"].includes(item.id) && facilities.dishwasher === "yes" ? "优先选择可机洗材质。" : "";
+    candidates.push({
+      itemId: item.id,
+      zhName: item.zh,
+      ukProductName: queryFor(item, profile, facilities),
+      category: item.category,
+      priority: item.priority,
+      quantity,
+      priceType: purchase.stage === "国内带" ? "uk-replacement-reference" : "rule-reference",
+      unitPriceGbp: item.price,
+      subtotalGbp: money(item.price * quantity),
+      budgetSubtotalGbp: purchase.stage === "英国买" ? money(item.price * quantity) : 0,
+      channel: purchase.channel,
+      plannedBuyStage: purchase.stage,
+      buyStage: purchase.stage,
+      reason: [status.reason, purchase.note, socialReason, storageReason].filter(Boolean).join(" "),
+      specWarning: [status.specWarning, dishwasherNote].filter(Boolean).join(" "),
+      ruleState: status.state,
+      searchRisk: item.searchRisk || 0,
+      productCandidates: [],
+      factStatus: "rule-reference"
+    });
+  }
+  candidates.sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]
+    || (a.plannedBuyStage === "国内带" ? -1 : 0) - (b.plannedBuyStage === "国内带" ? -1 : 0)
+    || b.searchRisk - a.searchRisk
+    || a.itemId.localeCompare(b.itemId));
+  return { baseItems: candidates.slice(0, 20), excluded };
+}
+
+function applyBudget(baseItems, budget, previousItems = []) {
+  const numericBudget = money(Number(budget));
+  const previous = new Map(previousItems.map((item) => [item.itemId, item.state]));
+  const actionable = baseItems.filter((item) => item.ruleState !== "verify");
+  const p0 = actionable.filter((item) => item.priority === "P0");
+  const flexible = actionable.filter((item) => item.priority !== "P0");
+  const p0Cost = money(p0.reduce((sum, item) => sum + (item.budgetSubtotalGbp ?? item.subtotalGbp), 0));
+  const insufficient = p0Cost > numericBudget;
+  let running = p0Cost;
+  const states = new Map(p0.map((item) => [item.itemId, "current"]));
+  for (const item of flexible) {
+    const budgetCost = item.budgetSubtotalGbp ?? item.subtotalGbp;
+    if (!insufficient && money(running + budgetCost) <= numericBudget) {
+      states.set(item.itemId, "current");
+      running = money(running + budgetCost);
+    } else {
+      states.set(item.itemId, "deferred");
+    }
+  }
+  for (const item of baseItems.filter((entry) => entry.ruleState === "verify")) states.set(item.itemId, "verify");
+  const items = baseItems.map((item) => ({ ...item, state: states.get(item.itemId) || "deferred", buyStage: states.get(item.itemId) === "current" ? (item.plannedBuyStage || item.buyStage) : states.get(item.itemId) === "verify" ? (item.plannedBuyStage || "入住后核实") : "以后再买" }));
+  const spend = money(items.filter((item) => item.state === "current").reduce((sum, item) => sum + (item.budgetSubtotalGbp ?? item.subtotalGbp), 0));
+  const currentIds = new Set(items.filter((item) => item.state === "current").map((item) => item.itemId));
+  const removed = items.filter((item) => previous.get(item.itemId) === "current" && !currentIds.has(item.itemId));
+  const added = items.filter((item) => previous.get(item.itemId) && previous.get(item.itemId) !== "current" && currentIds.has(item.itemId));
+  return {
+    items,
+    budgetGbp: numericBudget,
+    spendGbp: spend,
+    remainingGbp: money(Math.max(0, numericBudget - spend)),
+    currentCount: items.filter((item) => item.state === "current").length,
+    domesticCount: items.filter((item) => item.state === "current" && item.buyStage === "国内带").length,
+    ukCount: items.filter((item) => item.state === "current" && item.buyStage === "英国买").length,
+    verifyCount: items.filter((item) => item.state === "verify").length,
+    predepartureVerifyCount: items.filter((item) => item.state === "verify" && item.buyStage === "出发前核实").length,
+    arrivalVerifyCount: items.filter((item) => item.state === "verify" && item.buyStage === "入住后核实").length,
+    deferredCount: items.filter((item) => item.state === "deferred").length,
+    minimumP0Gbp: p0Cost,
+    shortfallGbp: insufficient ? money(p0Cost - numericBudget) : 0,
+    budgetStatus: insufficient ? "insufficient" : "within-budget",
+    diff: {
+      removedItems: removed.map((item) => item.itemId),
+      addedItems: added.map((item) => item.itemId),
+      savingsGbp: money(removed.reduce((sum, item) => sum + (item.budgetSubtotalGbp ?? item.subtotalGbp), 0) - added.reduce((sum, item) => sum + (item.budgetSubtotalGbp ?? item.subtotalGbp), 0)),
+      retainedEssentials: items.filter((item) => item.priority === "P0" && item.state === "current").map((item) => item.itemId)
+    }
+  };
+}
+
+function buildRecommendations(input) {
+  const validation = validateProfile(input.profile || {});
+  if (!validation.valid) {
+    const error = new Error("Profile validation failed");
+    error.code = "VALIDATION_ERROR";
+    error.details = validation.errors;
+    throw error;
+  }
+  const profile = { ...input.profile, budget: Number(input.profile.budget) };
+  const facilities = { ...defaultFacilities(), ...(input.facilities || {}) };
+  const parsedCarried = sanitizeParsedItems(input.parsedCarried || parseCarriedItems(profile.carriedText));
+  const { baseItems, excluded } = prepareBaseItems({ profile, facilities, parsedCarried });
+  return {
+    profile,
+    luggagePlan: calculateLuggageBands(profile),
+    facilities,
+    parsedCarried,
+    excluded,
+    baseItems,
+    ...applyBudget(baseItems, profile.budget),
+    warnings: buildWarnings(profile, facilities, parsedCarried),
+    generatedAt: new Date().toISOString()
+  };
+}
+
+function rebudget(result, budget) {
+  const next = applyBudget(result.baseItems || result.items || [], budget, result.items || []);
+  return { ...result, ...next, profile: { ...result.profile, budget: Number(budget) }, generatedAt: new Date().toISOString() };
+}
+
+function buildWarnings(profile, facilities, parsedCarried) {
+  const warnings = [];
+  if (profile.bedSize === "unknown") warnings.push("床型待核实：床品不能标记为尺寸已校验。");
+  if ([profile.preparedFittedSheet, profile.preparedFlatSheet, profile.preparedPillow, profile.preparedPillowcase].includes("unknown")) warnings.push("床品准备情况有不确定项：出发前核对后再决定是否购买。");
+  if (facilities.stovetop === "unknown" && profile.cooking !== "rarely") warnings.push("炉灶类型待核实：锅具暂不进入立即购买。");
+  if (profile.moveIn === "within-7") warnings.push("入住在 7 天内：配送信息缺失时不能承诺按时送达。");
+  if (parsedCarried.ambiguous?.length) warnings.push("已携带物品中有不确定匹配，未用于自动排重。");
+  return warnings;
+}
+
+function facilitySummary(facilities) {
+  const excluded = [];
+  if (facilities.microwave === "yes") excluded.push("微波炉");
+  if (facilities.kettle === "yes") excluded.push("水壶");
+  if (facilities.pillow === "yes") excluded.push("枕头");
+  const notes = [];
+  if (excluded.length) notes.push(`已有${excluded.join("、")}，不会重复推荐`);
+  if (facilities.stovetop === "induction") notes.push("电磁炉会触发锅具兼容检查");
+  else if (facilities.stovetop === "unknown") notes.push("炉灶类型不确定，锅具入住后核实");
+  if (facilities.kitchen_storage === "limited") notes.push("个人厨房储物有限，锅具保持少量、多用途");
+  if (facilities.dishwasher === "yes") notes.push("餐具优先检查可机洗材质");
+  const unknown = [];
+  if (facilities.desk_lamp === "unknown") unknown.push("台灯");
+  if (facilities.vacuum === "unknown") unknown.push("吸尘器");
+  if (facilities.drying === "unknown") unknown.push("晾衣设施");
+  if (unknown.length) notes.push(`${unknown.join("、")}暂不确定，不会直接计入购买金额`);
+  return `${notes.join("；")}。`;
+}
+
+function attachProducts(result, productGroups = []) {
+  const byId = new Map(productGroups.map((group) => [group.itemId, group]));
+  const decorate = (item) => {
+    const group = byId.get(item.itemId);
+    if (!group) return item;
+    const priced = (group.candidates || []).filter((candidate) => Number.isFinite(Number(candidate.priceGbp)) && Number(candidate.priceGbp) > 0);
+    const selected = group.factStatus === "live-api" ? priced[0] : null;
+    if (!selected) return { ...item, productCandidates: group.candidates || [], factStatus: group.factStatus || "unavailable" };
+    const unitPriceGbp = money(selected.priceGbp);
+    const subtotalGbp = money(unitPriceGbp * item.quantity);
+    return {
+      ...item,
+      unitPriceGbp,
+      subtotalGbp,
+      budgetSubtotalGbp: item.plannedBuyStage === "英国买" ? subtotalGbp : 0,
+      priceType: "live-api",
+      priceFetchedAt: selected.fetchedAt || group.fetchedAt,
+      selectedCandidateId: selected.externalId,
+      productCandidates: (group.candidates || []).map((candidate) => ({ ...candidate, selectedForBudget: candidate.externalId === selected.externalId })),
+      factStatus: "live-api"
+    };
+  };
+  const baseItems = result.baseItems.map(decorate);
+  const budgeted = applyBudget(baseItems, result.budgetGbp, result.items);
+  const decoratedGroups = productGroups.map((group) => ({
+    ...group,
+    candidates: (group.candidates || []).map((candidate) => ({
+      ...candidate,
+      selectedForBudget: baseItems.some((item) => item.selectedCandidateId === candidate.externalId)
+    }))
+  }));
+  return { ...result, ...budgeted, baseItems, productGroups: decoratedGroups };
+}
+
+function candidateSearchItems(result, limit = 5) {
+  return result.items
+    .filter((item) => item.state === "current" && item.buyStage === "英国买" && item.searchRisk > 0)
+    .sort((a, b) => b.searchRisk - a.searchRisk || b.subtotalGbp - a.subtotalGbp)
+    .slice(0, limit);
+}
+
+
+
+
+
+const STORAGE_KEY = "unikit-mvp-state-v2";
+const DEFAULT_STATE = {
+  route: "profile",
+  profileComplete: false,
+  facilitiesComplete: false,
+  contractAnalysis: null,
+  contractConfirmed: false,
+  aiSettings: { source: "gemini", model: "gemini-3.1-flash-lite" },
+  profile: { roomType: "", bedSize: "", moveIn: "", budget: 180, cooking: "", location: "", preparedFittedSheet: "", preparedFlatSheet: "", preparedPillow: "", preparedPillowcase: "", preparedDomestic: [], luggagePreset: "2x23", checkedBagCount: 2, checkedBagKg: 23, carryOnCount: 1, luggageSpace: "", guestCount: "", carriedText: "" },
+  facilities: defaultFacilities(),
+  parsedCarried: { items: [], ambiguous: [], unmatched: [], source: "local-rules" },
+  result: null
+};
+
+function loadState() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
+    if (!saved || typeof saved !== "object") return structuredClone(DEFAULT_STATE);
+    return {
+      ...structuredClone(DEFAULT_STATE),
+      ...saved,
+      aiSettings: { ...DEFAULT_STATE.aiSettings, ...(saved.aiSettings || {}) },
+      profile: { ...DEFAULT_STATE.profile, ...(saved.profile || {}) },
+      facilities: { ...defaultFacilities(), ...(saved.facilities || {}) }
+    };
+  } catch {
+    return structuredClone(DEFAULT_STATE);
+  }
+}
+
+let state = loadState();
+let filter = "all";
+let toastTimer;
+let aiCapabilities = {
+  runtime: "standalone",
+  sources: {
+    gemini: { available: false, status: "server_required", model: "gemini-3.1-flash-lite", models: ["gemini-3.1-flash-lite", "gemini-3-flash-preview"] },
+    openai: { available: false, status: "server_required", model: "gpt-5-mini", models: ["gpt-5-mini", "gpt-5.4-mini"] },
+    codex: { available: false, status: "desktop_only" },
+    demo: { available: true, status: "ready" }
+  }
+};
+
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
+const formatMoney = (value) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: Number(value) % 1 ? 2 : 0 }).format(Number(value) || 0);
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const LUGGAGE_PRESETS = {
+  "2x23": { checkedBagCount: 2, checkedBagKg: 23, carryOnCount: 1 },
+  "1x23": { checkedBagCount: 1, checkedBagKg: 23, carryOnCount: 1 },
+  "2x20": { checkedBagCount: 2, checkedBagKg: 20, carryOnCount: 1 }
+};
+const DEFAULT_BED_BY_ROOM = { "ensuite-small-double": "small-double", "studio-double": "double", "shared-single": "single", "shared-bath-single": "single", "twin-single": "single", unknown: "unknown" };
+const CONTRACT_PROFILE_LABELS = { roomType: "房型", bedSize: "床型" };
+const CONTRACT_VALUE_LABELS = {
+  "ensuite-small-double": "En-suite", "studio-double": "Studio", "shared-single": "Shared flat", "shared-bath-single": "Shared bathroom", "twin-single": "Twin room",
+  single: "Single", "small-double": "Small Double", double: "Double", yes: "有", no: "没有", unknown: "不确定", induction: "电磁炉", electric: "普通电炉", private: "独立卫浴", shared: "公共卫浴", limited: "很有限", normal: "一般 / 充足"
+};
+const CONFIDENCE_LABELS = { high: "高置信度", medium: "中置信度", low: "需确认" };
+
+function saveState() {
+  try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch { /* Some browsers restrict storage for local files; the current page still works. */ }
+}
+
+function showToast(message) {
+  const toast = $("#toast");
+  toast.textContent = message;
+  toast.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.hidden = true; }, 2200);
+}
+
+async function api(path, body) {
+  const response = await fetch(path, {
+    method: body ? "POST" : "GET",
+    headers: body ? { "Content-Type": "application/json" } : {},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!response.ok) {
+    const error = new Error(`Request failed with ${response.status}`);
+    error.response = await response.json().catch(() => ({}));
+    throw error;
+  }
+  return response.json();
+}
+
+async function checkServices() {
+  if (location.protocol === "file:") {
+    state.aiSettings.source = "demo";
+    updateServiceChip();
+    renderAISettings();
+    return;
+  }
+  try {
+    aiCapabilities = await api("/api/ai-settings");
+    const selected = aiCapabilities.sources[state.aiSettings.source];
+    if (!selected?.available || state.aiSettings.source === "codex") state.aiSettings.source = aiCapabilities.preferredSource || "demo";
+    const provider = aiCapabilities.sources[state.aiSettings.source];
+    const allowedModels = provider?.models || [];
+    if (allowedModels.length && !allowedModels.includes(state.aiSettings.model)) state.aiSettings.model = provider.model || allowedModels[0];
+    saveState();
+  } catch {
+    state.aiSettings.source = "demo";
+  }
+  updateServiceChip();
+  renderAISettings();
+}
+
+function currentAISource() {
+  return location.protocol === "file:" ? "demo" : state.aiSettings.source || "demo";
+}
+
+function updateServiceChip() {
+  const trigger = $("#ai-settings-open");
+  const label = $("#service-mode");
+  const source = currentAISource();
+  const live = ["gemini", "openai"].includes(source) && aiCapabilities.sources[source]?.available;
+  trigger.className = `mode-chip settings-trigger ${live ? "live" : "demo"}`;
+  const providerName = source === "gemini" ? "Gemini 免费层" : "OpenAI";
+  label.textContent = live ? `${providerName} · ${state.aiSettings.model}` : "演示模式 · 点击设置";
+}
+
+function setConnectionStatus(title, detail, type = "") {
+  const status = $("#ai-connection-status");
+  status.className = `connection-status ${type}`.trim();
+  status.innerHTML = `<b>${escapeHtml(title)}</b><span>${escapeHtml(detail)}</span>`;
+}
+
+function renderAISettings() {
+  const gemini = aiCapabilities.sources.gemini || { available: false, model: "gemini-3.1-flash-lite", models: ["gemini-3.1-flash-lite"] };
+  const openai = aiCapabilities.sources.openai;
+  const source = currentAISource();
+  const sourceInput = $(`input[name="aiSource"][value="${source}"]`);
+  if (sourceInput) sourceInput.checked = true;
+  const geminiInput = $('input[name="aiSource"][value="gemini"]');
+  geminiInput.disabled = !gemini.available;
+  const geminiBadge = $("#gemini-source-badge");
+  geminiBadge.className = `source-badge ${gemini.available ? "" : "warning"}`.trim();
+  geminiBadge.textContent = gemini.available ? "免费层已配置" : location.protocol === "file:" ? "需服务器" : "待配置";
+
+  const openaiInput = $('input[name="aiSource"][value="openai"]');
+  openaiInput.disabled = !openai.available;
+  const badge = $("#openai-source-badge");
+  badge.className = `source-badge ${openai.available ? "" : "warning"}`.trim();
+  badge.textContent = openai.available ? "已配置" : location.protocol === "file:" ? "需服务器" : "待配置";
+
+  const modelSelect = $("#ai-model");
+  const provider = source === "gemini" ? gemini : source === "openai" ? openai : null;
+  const models = provider?.models?.length ? provider.models : [state.aiSettings.model];
+  modelSelect.innerHTML = models.map((model) => `<option value="${escapeHtml(model)}">${escapeHtml(model)}${model === provider?.model ? " · 服务器默认" : ""}</option>`).join("");
+  modelSelect.value = models.includes(state.aiSettings.model) ? state.aiSettings.model : (provider?.model || models[0]);
+  const modelEnabled = Boolean(provider?.available);
+  modelSelect.disabled = !modelEnabled;
+  $("#ai-model-label").textContent = source === "gemini" ? "Gemini 模型" : source === "openai" ? "OpenAI 模型" : "AI 模型";
+  $("#model-settings").classList.toggle("is-disabled", !modelEnabled);
+  $("#test-ai-connection").disabled = ["gemini", "openai"].includes(source) ? !provider?.available : source === "codex";
+
+  if (source === "gemini" && gemini.available) setConnectionStatus("Gemini 免费层已配置", "可识别脱敏PDF和图片；每位访客每日调用次数有限，密钥不会进入浏览器。", "success");
+  else if (source === "openai" && openai.available) setConnectionStatus("OpenAI API 已配置", "点击测试可检查模型权限与 API 余额；不会显示或传回密钥。", "success");
+  else if (source === "demo") setConnectionStatus("演示模式可用", "粘贴文字可由本地规则预填；PDF 和图片不会被伪装成已识别。", "warning");
+  else setConnectionStatus("当前来源不可用", "Codex 桌面 Agent 只用于开发协作，不能作为公开网页的运行时接口。", "warning");
+}
+
+function openAISettings() {
+  renderAISettings();
+  $("#ai-settings-layer").hidden = false;
+  document.body.classList.add("settings-open");
+  $("#ai-settings-close").focus();
+}
+
+function closeAISettings() {
+  $("#ai-settings-layer").hidden = true;
+  document.body.classList.remove("settings-open");
+  $("#ai-settings-open").focus();
+}
+
+async function testAIConnection() {
+  const source = new FormData($("#ai-settings-form")).get("aiSource") || "demo";
+  const model = $("#ai-model").value || state.aiSettings.model;
+  const button = $("#test-ai-connection");
+  if (source === "demo") {
+    setConnectionStatus("演示模式正常", "本地规则无需网络和 API 额度；只支持文字输入。", "success");
+    return;
+  }
+  button.disabled = true;
+  button.textContent = "正在测试…";
+  const providerName = source === "gemini" ? "Gemini 免费层" : "OpenAI";
+  setConnectionStatus(`正在检查 ${providerName}`, "将发送一个最小请求，验证密钥、模型权限和可用额度。", "");
+  try {
+    const result = await api("/api/ai-test", { source, model });
+    setConnectionStatus("连接成功", `${result.provider} · ${result.model} 可以用于合同识别。`, "success");
+  } catch (error) {
+    setConnectionStatus("连接失败", error.response?.message || "请检查服务器配置、模型权限和可用额度。", "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "测试当前连接";
+  }
+}
+
+function contractValueLabel(value) {
+  return CONTRACT_VALUE_LABELS[value] || value || "不确定";
+}
+
+function contractRecordMarkup(record) {
+  if (!record) return "";
+  const unknown = !record.value || record.value === "unknown";
+  const evidence = record.evidence ? `“${escapeHtml(record.evidence)}”` : "材料中未找到明确依据";
+  return `<span class="ai-value ${unknown ? "unknown" : ""}">${escapeHtml(contractValueLabel(record.value))}</span><span class="confidence ${escapeHtml(record.confidence || "low")}">${escapeHtml(CONFIDENCE_LABELS[record.confidence] || "需确认")}</span><small>${evidence}</small>`;
+}
+
+function renderContractAnalysis() {
+  const analysis = state.contractAnalysis;
+  const result = $("#contract-result");
+  const banner = $("#ai-confirmation-banner");
+  const confirmation = $("#ai-confirmation-control");
+  const profileTargets = { roomType: $("#room-type-ai"), bedSize: $("#bed-size-ai") };
+  for (const target of Object.values(profileTargets)) { target.hidden = !analysis; target.innerHTML = ""; }
+  result.hidden = !analysis;
+  banner.hidden = !analysis;
+  confirmation.hidden = !analysis;
+  $("#facilities-title").textContent = analysis ? "确认AI识别结果" : "确认宿舍设施";
+  $("#facilities-subtitle").textContent = analysis ? "AI只负责预填；你可以修改任何选项。“不确定”不会被当成“没有”。" : "逐项确认宿舍已经提供的设施；“不确定”不会被当成“没有”。";
+  if (!analysis) return;
+
+  const count = contractAnalysisCount(analysis);
+  const isAIAnalysis = ["gemini-contract", "openai-contract"].includes(analysis.source);
+  const sourceLabel = analysis.source === "gemini-contract" ? "Gemini合同识别" : analysis.source === "openai-contract" ? "OpenAI合同识别" : "本地演示识别";
+  const sourceDetail = isAIAnalysis && analysis.model ? ` · ${analysis.model}` : "";
+  result.innerHTML = `
+    <div class="contract-result-head"><div><b>${escapeHtml(sourceLabel)}完成</b><small>${escapeHtml(analysis.fileName || "合同文字")} · 识别 ${count} 项${escapeHtml(sourceDetail)}</small></div><span>${isAIAnalysis ? "AI" : "演示"}</span></div>
+    <div class="contract-profile-results">
+      ${Object.entries(analysis.profile || {}).map(([key, record]) => `<div><b>${escapeHtml(CONTRACT_PROFILE_LABELS[key] || key)}</b>${contractRecordMarkup(record)}</div>`).join("")}
+    </div>
+    <p>已自动填写对应选项。请继续补充预算、行李等个人信息，并在页面2逐项确认宿舍设施。</p>`;
+
+  for (const [key, target] of Object.entries(profileTargets)) {
+    const record = analysis.profile?.[key];
+    target.hidden = false;
+    target.innerHTML = `<b>AI识别：</b>${contractRecordMarkup(record)}`;
+  }
+  banner.className = `notice ${isAIAnalysis ? "info" : "warning"}`;
+  banner.innerHTML = `<b>${escapeHtml(sourceLabel)}</b><span>合同共识别 ${count} 项。每项均显示原文依据；未提及的信息保持“不确定”，请人工确认后再生成方案。</span>`;
+  $("#confirm-ai-results").checked = Boolean(state.contractConfirmed);
+}
+
+function applyContractAnalysis(analysis) {
+  state.contractAnalysis = analysis;
+  state.contractConfirmed = false;
+  const roomType = analysis.profile?.roomType?.value || "unknown";
+  const bedSize = analysis.profile?.bedSize?.value || "unknown";
+  $("#room-type").value = roomType;
+  $("#bed-size").value = bedSize;
+  state.profile.roomType = roomType;
+  state.profile.bedSize = bedSize;
+  for (const group of FACILITY_GROUPS) {
+    for (const field of group.fields) state.facilities[field.id] = analysis.facilities?.[field.id]?.value || "unknown";
+  }
+  state.facilitiesComplete = false;
+  state.result = null;
+  renderFacilities();
+  renderContractAnalysis();
+  saveState();
+}
+
+function setContractStatus(message, type = "info") {
+  const status = $("#contract-status");
+  status.hidden = !message;
+  status.className = `contract-status ${type}`;
+  status.textContent = message;
+}
+
+function fileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(String(reader.result || "")));
+    reader.addEventListener("error", () => reject(new Error("文件读取失败")));
+    reader.readAsDataURL(file);
+  });
+}
+
+function fileAsText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(String(reader.result || "")));
+    reader.addEventListener("error", () => reject(new Error("文件读取失败")));
+    reader.readAsText(file, "utf-8");
+  });
+}
+
+async function analyzeContract() {
+  const button = $("#analyze-contract");
+  const file = $("#contract-file").files?.[0];
+  let text = $("#contract-text").value.trim();
+  if (!file && !text) {
+    setContractStatus("请上传合同，或粘贴一段住宿说明。", "error");
+    return;
+  }
+  if (file && file.size > 4 * 1024 * 1024) {
+    setContractStatus("文件不能超过 4MB。可以截取包含房型和设施的关键页面后再上传。", "error");
+    return;
+  }
+  button.disabled = true;
+  button.textContent = "正在识别合同…";
+  setContractStatus("正在提取房型、床型和宿舍设施；未出现的信息会保留为“不确定”。", "loading");
+  try {
+    const plainTextFile = file && (file.type === "text/plain" || /\.(txt|md)$/i.test(file.name));
+    if (plainTextFile) text = [text, await fileAsText(file)].filter(Boolean).join("\n");
+    const payload = {
+      text: text.slice(0, 12000),
+      fileName: file?.name || "粘贴的住宿说明",
+      mimeType: file?.type || "text/plain",
+      fileData: file && !plainTextFile ? await fileAsDataUrl(file) : "",
+      aiSource: currentAISource(),
+      aiModel: state.aiSettings.model
+    };
+    let analysis;
+    if (payload.aiSource === "demo") {
+      if (!text) {
+        const error = new Error("DEMO_FILE_UNSUPPORTED");
+        error.response = { message: "演示模式不能读取PDF或图片。请切换到已配置的Gemini或OpenAI API，或粘贴合同文字。" };
+        throw error;
+      }
+      analysis = parseContractLocally(text, { fileName: payload.fileName });
+    } else {
+      analysis = await api("/api/parse-contract", payload);
+    }
+    applyContractAnalysis(analysis);
+    const isAIAnalysis = ["gemini-contract", "openai-contract"].includes(analysis.source);
+    setContractStatus(isAIAnalysis ? `AI识别完成（${analysis.model || state.aiSettings.model}）。请检查自动填写内容，并在页面2完成人工确认。` : "已使用本地演示规则预填；这是文字规则结果，不是AI解析。", isAIAnalysis ? "success" : "warning");
+  } catch (error) {
+    setContractStatus(error.response?.message || "当前无法识别这个文件。你仍然可以手动填写，或粘贴合同文字后重试。", "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "识别并自动填写";
+  }
+}
+
+function loadExampleContract() {
+  $("#contract-file").value = "";
+  $("#contract-text").value = "Your en-suite room contains a 4ft small double bed and mattress. Bed linen and pillows are not provided. The shared kitchen includes an induction hob, microwave and kettle. A laundry room is available. The contract does not mention a dishwasher, vacuum cleaner or drying rack.";
+  setContractStatus("示例已填入。点击“识别并自动填写”查看AI预填与人工确认流程。", "info");
+}
+
+function clearContractAnalysis() {
+  state.contractAnalysis = null;
+  state.contractConfirmed = false;
+  $("#contract-file").value = "";
+  $("#contract-text").value = "";
+  setContractStatus("", "info");
+  renderFacilities();
+  renderContractAnalysis();
+  saveState();
+}
+
+function luggageValuesFromControls() {
+  const preset = $("#luggage-preset").value;
+  const fixed = LUGGAGE_PRESETS[preset];
+  return {
+    luggagePreset: preset,
+    checkedBagCount: fixed?.checkedBagCount ?? Number($("#checked-bag-count").value),
+    checkedBagKg: fixed?.checkedBagKg ?? Number($("#checked-bag-kg").value),
+    carryOnCount: fixed?.carryOnCount ?? Number($("#carry-on-count").value)
+  };
+}
+
+function renderLuggageOptions() {
+  const allowance = luggageValuesFromControls();
+  const plan = calculateLuggageBands(allowance);
+  const current = new FormData($("#profile-form")).get("luggageSpace") || state.profile.luggageSpace;
+  $("#luggage-allowance-summary").textContent = plan.allowanceSummary;
+  $("#luggage-options").innerHTML = Object.entries(plan.options).map(([value, option]) => `
+    <label class="luggage-option">
+      <input type="radio" name="luggageSpace" value="${escapeHtml(value)}" ${current === value ? "checked" : ""} required>
+      <span><b>${escapeHtml(option.title)}</b><small>${escapeHtml(option.detail)}</small></span>
+    </label>`).join("");
+}
+
+function initializeLuggagePlanner() {
+  $("#luggage-preset").value = state.profile.luggagePreset || "2x23";
+  $("#checked-bag-count").value = state.profile.checkedBagCount || 2;
+  $("#checked-bag-kg").value = state.profile.checkedBagKg || 23;
+  $("#carry-on-count").value = Number.isFinite(Number(state.profile.carryOnCount)) ? state.profile.carryOnCount : 1;
+  const fixed = LUGGAGE_PRESETS[$("#luggage-preset").value];
+  if (fixed) {
+    $("#checked-bag-count").value = fixed.checkedBagCount;
+    $("#checked-bag-kg").value = fixed.checkedBagKg;
+    $("#carry-on-count").value = fixed.carryOnCount;
+  }
+  $("#custom-luggage").hidden = $("#luggage-preset").value !== "custom";
+  renderLuggageOptions();
+}
+
+function renderFacilities() {
+  const container = $("#facility-groups");
+  container.innerHTML = FACILITY_GROUPS.map((group) => `
+    <section class="facility-group" aria-labelledby="group-${group.id}">
+      <h2 id="group-${group.id}"><span aria-hidden="true">${escapeHtml(group.icon)}</span>${escapeHtml(group.label)}</h2>
+      ${group.fields.map((field) => {
+        const insight = state.contractAnalysis?.facilities?.[field.id];
+        return `
+        <div class="facility-row">
+          <div class="facility-label"><span>${escapeHtml(field.label)}</span>${insight ? `<div class="facility-ai-meta">${contractRecordMarkup(insight)}</div>` : ""}</div>
+          <select name="${escapeHtml(field.id)}" aria-label="${escapeHtml(field.label)}">
+            ${field.options.map(([value, label]) => `<option value="${escapeHtml(value)}" ${state.facilities[field.id] === value ? "selected" : ""}>${escapeHtml(label)}</option>`).join("")}
+          </select>
+        </div>`;
+      }).join("")}
+    </section>`).join("");
+  $$('select', container).forEach((select) => select.addEventListener("change", () => {
+    state.facilities[select.name] = select.value;
+    state.contractConfirmed = false;
+    $("#confirm-ai-results").checked = false;
+    state.facilitiesComplete = false;
+    state.result = null;
+    saveState();
+    updateFacilityFeedback();
+  }));
+  updateFacilityFeedback();
+}
+
+function renderDomesticPrepItems() {
+  $("#domestic-prep-list").innerHTML = DOMESTIC_PREP_ITEMS.map((item) => `
+    <label class="prep-check">
+      <input type="checkbox" name="preparedDomestic" value="${escapeHtml(item.id)}">
+      <b>${escapeHtml(item.label)}</b>
+      <small>${escapeHtml(item.transport)}${item.remark ? ` · ${escapeHtml(item.remark)}` : ""}</small>
+    </label>`).join("");
+}
+
+function updateFacilityFeedback() {
+  $("#rule-summary").innerHTML = `<b>规则检查：</b><span>${escapeHtml(facilitySummary(state.facilities))}</span>`;
+  $("#bed-warning").hidden = state.profile.bedSize !== "unknown";
+}
+
+function fillProfileForm() {
+  const form = $("#profile-form");
+  for (const [key, value] of Object.entries(state.profile)) {
+    const control = form.elements[key];
+    if (!control) continue;
+    if (key === "preparedDomestic") {
+      const selected = new Set(Array.isArray(value) ? value : []);
+      $$('input[name="preparedDomestic"]', form).forEach((option) => { option.checked = selected.has(option.value); });
+    } else if (["location", "luggageSpace"].includes(key)) {
+      const option = form.querySelector(`input[name="${CSS.escape(key)}"][value="${CSS.escape(value)}"]`);
+      if (option) option.checked = true;
+    } else {
+      control.value = value ?? "";
+    }
+  }
+  if (!$("#bed-size").value && DEFAULT_BED_BY_ROOM[$("#room-type").value]) {
+    $("#bed-size").value = DEFAULT_BED_BY_ROOM[$("#room-type").value];
+  }
+  $("#text-count").textContent = `${state.profile.carriedText.length} / 500`;
+  renderParsedPreview();
+  renderContractAnalysis();
+}
+
+function profileFromForm() {
+  const data = new FormData($("#profile-form"));
+  const luggage = luggageValuesFromControls();
+  return {
+    roomType: String(data.get("roomType") || ""),
+    bedSize: String(data.get("bedSize") || ""),
+    moveIn: String(data.get("moveIn") || ""),
+    budget: Number(data.get("budget")),
+    cooking: String(data.get("cooking") || ""),
+    location: String(data.get("location") || ""),
+    preparedFittedSheet: String(data.get("preparedFittedSheet") || ""),
+    preparedFlatSheet: String(data.get("preparedFlatSheet") || ""),
+    preparedPillow: String(data.get("preparedPillow") || ""),
+    preparedPillowcase: String(data.get("preparedPillowcase") || ""),
+    preparedDomestic: data.getAll("preparedDomestic").map(String),
+    ...luggage,
+    luggageSpace: String(data.get("luggageSpace") || ""),
+    guestCount: String(data.get("guestCount") || ""),
+    carriedText: String(data.get("carriedText") || "").trim()
+  };
+}
+
+function showProfileErrors(errors) {
+  const mapping = { roomType: "room-type", bedSize: "bed-size", moveIn: "move-in", budget: "budget", cooking: "cooking", location: "location", beddingPreparation: "bedding-preparation", luggageAllowance: "luggage-allowance", luggageSpace: "luggage-space", guestCount: "guest-count" };
+  for (const [key, id] of Object.entries(mapping)) {
+    const control = ["location", "beddingPreparation", "luggageAllowance", "luggageSpace"].includes(key) ? null : $(`#${id}`);
+    if (control) control.setAttribute("aria-invalid", errors[key] ? "true" : "false");
+    $(`#${id}-error`).textContent = errors[key] || "";
+  }
+  const summary = $("#form-summary");
+  const count = Object.keys(errors).length;
+  summary.hidden = count === 0;
+  summary.textContent = count ? `请先修正 ${count} 处信息，再继续。` : "";
+  if (count) {
+    const firstKey = Object.keys(errors)[0];
+    const firstId = mapping[firstKey];
+    const focusTarget = firstKey === "luggageAllowance" ? $("#luggage-preset") : firstKey === "luggageSpace" ? $("#luggage-options input") : firstKey === "location" ? $('input[name="location"]') : firstKey === "beddingPreparation" ? $('[name="preparedFittedSheet"]') : firstId ? $(`#${firstId}`) : null;
+    if (focusTarget) focusTarget.focus();
+  }
+}
+
+function renderParsedPreview() {
+  const preview = $("#parsed-preview");
+  const parsed = state.parsedCarried;
+  const hasContent = parsed.items?.length || parsed.ambiguous?.length || parsed.unmatched?.length;
+  preview.hidden = !hasContent;
+  if (!hasContent) return;
+  const labels = parsed.items.map((item) => escapeHtml(item.label || ITEM_INDEX[item.itemId]?.zh || item.itemId));
+  const uncertain = parsed.ambiguous.map((item) => escapeHtml(item.label || item.itemId));
+  const source = ["gemini", "openai"].includes(parsed.source) ? "AI 结构化" : "本地词典";
+  preview.innerHTML = `<b>${source}：</b>${labels.length ? `确认已带 ${labels.join("、")}` : "未识别到可直接排重的物品"}${uncertain.length ? `；<span class="ambiguous">待确认 ${uncertain.join("、")}，暂不自动排重</span>` : ""}${parsed.unmatched?.length ? `；未匹配 ${parsed.unmatched.map(escapeHtml).join("、")}` : ""}。`;
+}
+
+function updateNav(route) {
+  const sequence = ["profile", "facilities", "results"];
+  $$(".step-nav button").forEach((button) => {
+    const target = button.dataset.route;
+    const enabled = target === "profile" || (target === "facilities" && state.profileComplete) || (target === "results" && state.facilitiesComplete && state.result);
+    button.disabled = !enabled;
+    if (target === route || (route === "loading" && target === "results")) button.setAttribute("aria-current", "step");
+    else button.removeAttribute("aria-current");
+    const targetIndex = sequence.indexOf(target);
+    const currentIndex = sequence.indexOf(route === "loading" ? "results" : route);
+    button.classList.toggle("completed", enabled && targetIndex < currentIndex);
+  });
+}
+
+function showPage(route, { focus = true } = {}) {
+  if (route === "facilities" && !state.profileComplete) route = "profile";
+  if (route === "results" && (!state.facilitiesComplete || !state.result)) route = state.profileComplete ? "facilities" : "profile";
+  $$("[data-page]").forEach((page) => { page.hidden = page.dataset.page !== route; });
+  state.route = route;
+  saveState();
+  updateNav(route);
+  if (route !== "loading") history.replaceState(null, "", `#${route}`);
+  if (focus) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    const heading = $(`[data-page="${route}"] h1`);
+    if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
+  }
+}
+
+async function handleProfileSubmit(event) {
+  event.preventDefault();
+  const profile = profileFromForm();
+  const validation = validateProfile(profile);
+  showProfileErrors(validation.errors);
+  if (!validation.valid) return;
+  const submit = event.submitter;
+  submit.disabled = true;
+  submit.textContent = "正在理解已带物品…";
+  try {
+    let parsed = parseCarriedItems(profile.carriedText);
+    if (profile.carriedText && ["gemini", "openai"].includes(currentAISource())) {
+      try { parsed = await api("/api/parse-items", { text: profile.carriedText, aiSource: currentAISource(), aiModel: state.aiSettings.model }); }
+      catch { parsed = { ...parseCarriedItems(profile.carriedText), fallbackReason: "AI_PARSE_FAILED" }; }
+    }
+    state.profile = profile;
+    state.parsedCarried = parsed;
+    state.profileComplete = true;
+    state.facilitiesComplete = false;
+    state.result = null;
+    saveState();
+    renderParsedPreview();
+    updateFacilityFeedback();
+    showPage("facilities");
+  } finally {
+    submit.disabled = false;
+    submit.innerHTML = '继续检查宿舍设施 <span aria-hidden="true">→</span>';
+  }
+}
+
+function localFallbackResult() {
+  const result = buildRecommendations({ profile: state.profile, facilities: state.facilities, parsedCarried: state.parsedCarried });
+  const productGroups = candidateSearchItems(result).map((item) => ({
+    itemId: item.itemId,
+    query: item.ukProductName,
+    factStatus: "rule-reference",
+    candidates: [{ title: item.ukProductName, priceGbp: item.unitPriceGbp, factStatus: "rule-reference" }]
+  }));
+  return { ...result, productGroups, productDataMode: "local-reference" };
+}
+
+async function handleFacilitiesSubmit(event) {
+  event.preventDefault();
+  if (state.contractAnalysis && !$("#confirm-ai-results").checked) {
+    const error = $("#ai-confirmation-error");
+    error.hidden = false;
+    error.textContent = "请先确认AI预填内容；你可以直接修改任何识别结果。";
+    $("#confirm-ai-results").focus();
+    return;
+  }
+  $("#ai-confirmation-error").hidden = true;
+  state.contractConfirmed = Boolean(state.contractAnalysis);
+  state.facilitiesComplete = true;
+  saveState();
+  showPage("loading");
+  const rules = $("#load-rules");
+  const products = $("#load-products");
+  rules.className = "active";
+  rules.querySelector("em").textContent = "处理中";
+  products.className = "";
+  products.querySelector("em").textContent = "等待";
+  await delay(350);
+  rules.className = "done";
+  rules.querySelector("em").textContent = "完成";
+  products.className = "active";
+  products.querySelector("em").textContent = "查询中";
+  try {
+    state.result = await api("/api/recommendations", { profile: state.profile, facilities: state.facilities, parsedCarried: state.parsedCarried });
+  } catch {
+    state.result = localFallbackResult();
+  }
+  await delay(300);
+  products.className = "done";
+  products.querySelector("em").textContent = state.result.productDataMode === "live-api" ? "已获取" : state.result.productDataMode === "mixed" ? "部分获取" : state.result.productDataMode === "demo-snapshot" ? "演示快照" : state.result.productDataMode === "local-reference" ? "购买参考" : "已降级";
+  saveState();
+  renderResults();
+  showPage("results");
+}
+
+function resultStatusLabel(result) {
+  return result.budgetStatus === "insufficient" ? "预算不足" : "✓ 未超预算";
+}
+
+function diffText(result) {
+  const removed = result.diff?.removedItems || [];
+  const added = result.diff?.addedItems || [];
+  if (!removed.length && !added.length) return "当前预算下，现有选择无需变化；P0 必需品优先保留。";
+  const removedNames = removed.map((id) => ITEM_INDEX[id]?.zh || id);
+  const addedNames = added.map((id) => ITEM_INDEX[id]?.zh || id);
+  const parts = [];
+  if (removedNames.length) parts.push(`${removedNames.join("、")}改为“以后再买”`);
+  if (addedNames.length) parts.push(`${addedNames.join("、")}重新加入本周`);
+  if (result.diff.savingsGbp > 0) parts.push(`本轮节省 ${formatMoney(result.diff.savingsGbp)}`);
+  parts.push("P0 必需品仍优先保留");
+  return `${parts.join("；")}。`;
+}
+
+function factNotice(result) {
+  if (result.productDataMode === "live-api") return "商品候选来自本次实时 API 查询；通过商家白名单与规格检查的默认候选价格已进入预算。缺失字段显示“信息不足”，不会由 AI 补写。";
+  if (result.productDataMode === "mixed") return "部分品类使用通过规格检查的 API 实价，其余保留规则参考价或带日期的演示快照；演示价格不会覆盖预算。";
+  if (["demo-snapshot", "local-reference"].includes(result.productDataMode)) return "当前未配置商品 API。下方显示英文购买名、英国规则参考价和零售商搜索入口；点击后请以商家网站的实时价格、库存和配送信息为准。";
+  return "商品服务不可用，因此只展示可测试的规则清单；没有生成商品名、实时价格或链接。";
+}
+
+function renderResults() {
+  const result = state.result;
+  if (!result) return;
+  $("#metric-budget").textContent = formatMoney(result.budgetGbp);
+  $("#metric-spend").textContent = formatMoney(result.spendGbp);
+  $("#metric-left").textContent = formatMoney(result.remainingGbp);
+  $("#metric-count").textContent = `${result.currentCount} 项`;
+  $("#metric-count-label").textContent = `国内带 ${result.domesticCount || 0} · 英国买 ${result.ukCount || 0}`;
+  const status = $("#budget-status");
+  status.className = `status-pill ${result.budgetStatus === "insufficient" ? "danger" : "success"}`;
+  status.textContent = resultStatusLabel(result);
+  const input = $("#adjust-budget");
+  const range = $("#budget-range");
+  input.value = result.budgetGbp;
+  range.value = Math.min(300, Math.max(40, result.budgetGbp));
+  $("#budget-diff").textContent = diffText(result);
+  const insufficient = $("#insufficient-notice");
+  insufficient.hidden = result.budgetStatus !== "insufficient";
+  insufficient.innerHTML = result.budgetStatus === "insufficient" ? `<b>P0 最低成本为 ${formatMoney(result.minimumP0Gbp)}</b><span>当前还差 ${formatMoney(result.shortfallGbp)}。系统没有为了“看起来成功”而删除关键必需品，请提高预算或明确接受缺口。</span>` : "";
+  $("#fact-notice").textContent = factNotice(result);
+  const allowanceLabel = result.luggagePlan?.allowanceLabel || calculateLuggageBands(result.profile).allowanceLabel;
+  const preparedCount = (result.profile.preparedDomestic || []).length + [result.profile.preparedFittedSheet, result.profile.preparedFlatSheet, result.profile.preparedPillow, result.profile.preparedPillowcase].filter((value) => value === "yes").length;
+  $("#stage-summary").innerHTML = `
+    <div class="domestic"><span>出发前 · ${escapeHtml(allowanceLabel)} · 已准备 ${preparedCount} 项</span><strong>另建议国内带 ${result.domesticCount || 0} 项</strong></div>
+    <div class="uk"><span>落地采购</span><strong>英国买 ${result.ukCount || 0} 项</strong></div>
+    <div class="verify"><span>信息不足</span><strong>待核实 ${result.verifyCount || 0} 项${result.predepartureVerifyCount ? ` · 出发前 ${result.predepartureVerifyCount}` : ""}${result.arrivalVerifyCount ? ` · 入住后 ${result.arrivalVerifyCount}` : ""}</strong></div>
+    <div><span>预算取舍</span><strong>以后再买 ${result.deferredCount || 0} 项</strong></div>`;
+  renderShoppingList();
+  renderProducts();
+}
+
+function renderShoppingList() {
+  const result = state.result;
+  const stageKey = (item) => item.state === "verify" ? "verify" : item.state === "deferred" ? "deferred" : item.buyStage === "国内带" ? "domestic" : "uk";
+  const items = result.items.filter((item) => filter === "all" || stageKey(item) === filter);
+  $("#shopping-list").innerHTML = items.length ? items.map((item) => `
+    <article class="shopping-item" data-state="${escapeHtml(item.state)}">
+      <div class="item-main"><div><strong>${escapeHtml(item.zhName)}</strong><span class="priority ${item.priority.toLowerCase()}">${escapeHtml(item.priority)}</span></div><small>${escapeHtml(item.ukProductName)} · 数量 ${escapeHtml(item.quantity)}</small></div>
+      <div class="item-rule">${escapeHtml(item.reason)}${item.specWarning ? `<small>${escapeHtml(item.specWarning)}</small>` : ""}</div>
+      <div class="item-price">${item.state === "verify" ? "—" : item.buyStage === "国内带" ? "不计入" : formatMoney(item.subtotalGbp)}<small>${item.state === "verify" ? "待核实，不计入预算" : item.buyStage === "国内带" ? `英国补购参考 ${formatMoney(item.subtotalGbp)}` : item.state === "deferred" ? "规则参考价" : item.priceType === "live-api" ? `API 实价 · ${escapeHtml((item.priceFetchedAt || "").slice(0, 10))}` : "规则参考价 · 计入预算"}</small></div>
+      <span class="item-state ${escapeHtml(stageKey(item))}">${escapeHtml(item.buyStage)}</span>
+    </article>`).join("") : '<div class="empty-products">此筛选条件下没有项目。</div>';
+}
+
+function renderProducts() {
+  const groups = state.result.productGroups || [];
+  const panel = $("#product-panel");
+  if (!groups.length) {
+    panel.innerHTML = '<div class="empty-products"><b>商品事实暂不可用</b><br>规则清单和预算仍然有效；系统不会让 AI 补写商品价格或链接。</div>';
+    return;
+  }
+  panel.innerHTML = groups.map((group) => {
+    const item = ITEM_INDEX[group.itemId];
+    const snapshot = group.factStatus !== "live-api";
+    const cards = group.candidates?.length ? group.candidates.map((candidate) => {
+      const query = group.query || candidate.query || candidate.title || item?.en;
+      const searchLinks = shoppingLinksFor({ category: item?.category, query });
+      const directLink = candidate.url ? [{ label: "查看具体商品", url: candidate.url, direct: true }] : [];
+      const links = [...directLink, ...searchLinks].slice(0, candidate.url ? 3 : 3);
+      return `<div class="product-card">
+        <div class="product-copy">
+          <strong>${escapeHtml(candidate.title || query || "信息不足")}</strong>
+          <span>${candidate.priceGbp ? `${snapshot ? "英国参考价" : "实时价格"} ${formatMoney(candidate.priceGbp)}` : "价格信息不足"}${!snapshot && candidate.merchant ? ` · ${escapeHtml(candidate.merchant)}` : ""}${candidate.selectedForBudget ? " · 已用于预算" : ""}</span>
+          <small>${snapshot ? "搜索页会显示最新价格和库存；下单前核对尺寸、插头或炉灶规格。" : `${candidate.deliveryText ? escapeHtml(candidate.deliveryText) : "配送信息请在商品页确认"}${candidate.fetchedAt ? ` · 查询于 ${escapeHtml(candidate.fetchedAt.slice(0, 10))}` : ""}`}</small>
+          <div class="purchase-links">${links.map((link) => `<a class="${link.direct ? "direct" : ""}" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label)}</a>`).join("")}</div>
+        </div>
+      </div>`;
+    }).join("") : '<div class="empty-products">没有通过商家白名单和规格检查的候选；可先使用采购清单中的英文名搜索。</div>';
+    return `<section class="product-group"><div class="product-group-head"><h3>${escapeHtml(item?.zh || group.itemId)}</h3><span class="source-badge ${snapshot ? "snapshot" : "live"}">${snapshot ? "购买参考" : "实时商品"}</span></div>${cards}</section>`;
+  }).join("");
+}
+
+function updateBudget(rawValue) {
+  const budget = Number(rawValue);
+  if (!Number.isFinite(budget) || budget < 40 || budget > 500 || !state.result) return;
+  state.result = rebudget(state.result, budget);
+  state.profile.budget = budget;
+  saveState();
+  renderResults();
+}
+
+async function copySummary() {
+  const result = state.result;
+  const domestic = result.items.filter((item) => item.state === "current" && item.buyStage === "国内带");
+  const uk = result.items.filter((item) => item.state === "current" && item.buyStage === "英国买");
+  const verify = result.items.filter((item) => item.state === "verify");
+  const deferred = result.items.filter((item) => item.state === "deferred");
+  const text = [
+    `UniKit Edinburgh 第一周采购清单`,
+    `预算 ${formatMoney(result.budgetGbp)}｜预计 ${formatMoney(result.spendGbp)}｜剩余 ${formatMoney(result.remainingGbp)}`,
+    "",
+    "国内带（不计入英国预算）：",
+    ...domestic.map((item) => `- ${item.zhName}：${item.reason}`),
+    "",
+    "英国买：",
+    ...uk.map((item) => `- ${item.zhName} / ${item.ukProductName} / ${formatMoney(item.subtotalGbp)}`),
+    ...(verify.length ? ["", "待核实：", ...verify.map((item) => `- ${item.zhName}（${item.buyStage}）：${item.reason}`)] : []),
+    ...(deferred.length ? ["", "以后再买：", ...deferred.map((item) => `- ${item.zhName}`)] : [])
+  ].join("\n");
+  try { await navigator.clipboard.writeText(text); showToast("清单摘要已复制"); }
+  catch { showToast("浏览器未允许复制，请手动选择清单"); }
+}
+
+function bindEvents() {
+  $("#profile-form").addEventListener("submit", handleProfileSubmit);
+  $("#facilities-form").addEventListener("submit", handleFacilitiesSubmit);
+  $("#ai-settings-open").addEventListener("click", openAISettings);
+  $$('[data-close-ai-settings]').forEach((control) => control.addEventListener("click", closeAISettings));
+  $("#test-ai-connection").addEventListener("click", testAIConnection);
+  $$('input[name="aiSource"]').forEach((input) => input.addEventListener("change", (event) => {
+    const savedSource = state.aiSettings.source;
+    state.aiSettings.source = event.target.value;
+    renderAISettings();
+    state.aiSettings.source = savedSource;
+  }));
+  $("#ai-settings-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const source = String(form.get("aiSource") || "demo");
+    if (["gemini", "openai"].includes(source) && !aiCapabilities.sources[source]?.available) {
+      const providerName = source === "gemini" ? "Gemini API" : "OpenAI API";
+      const variableName = source === "gemini" ? "GEMINI_API_KEY" : "OPENAI_API_KEY";
+      setConnectionStatus(`${providerName} 尚未配置`, `请先在服务器端设置 ${variableName}。`, "error");
+      return;
+    }
+    state.aiSettings = { source: source === "codex" ? "demo" : source, model: String(form.get("aiModel") || "local-rules") };
+    saveState();
+    updateServiceChip();
+    closeAISettings();
+    showToast(state.aiSettings.source === "gemini" ? `已切换到 Gemini 免费层 · ${state.aiSettings.model}` : state.aiSettings.source === "openai" ? `已切换到 OpenAI · ${state.aiSettings.model}` : "已切换到演示模式");
+  });
+  $("#analyze-contract").addEventListener("click", analyzeContract);
+  $("#load-example-contract").addEventListener("click", loadExampleContract);
+  $("#clear-contract").addEventListener("click", clearContractAnalysis);
+  $("#contract-file").addEventListener("change", (event) => {
+    const file = event.target.files?.[0];
+    setContractStatus(file ? `已选择 ${file.name} · ${(file.size / 1024 / 1024).toFixed(2)}MB` : "", "info");
+  });
+  $("#confirm-ai-results").addEventListener("change", (event) => {
+    state.contractConfirmed = event.target.checked;
+    $("#ai-confirmation-error").hidden = event.target.checked;
+    saveState();
+  });
+  $("#carried-text").addEventListener("input", (event) => { $("#text-count").textContent = `${event.target.value.length} / 500`; });
+  $("#room-type").addEventListener("change", (event) => {
+    const suggested = DEFAULT_BED_BY_ROOM[event.target.value];
+    if (suggested) $("#bed-size").value = suggested;
+    state.contractConfirmed = false;
+  });
+  $("#luggage-preset").addEventListener("change", (event) => {
+    const fixed = LUGGAGE_PRESETS[event.target.value];
+    $("#custom-luggage").hidden = event.target.value !== "custom";
+    if (fixed) {
+      $("#checked-bag-count").value = fixed.checkedBagCount;
+      $("#checked-bag-kg").value = fixed.checkedBagKg;
+      $("#carry-on-count").value = fixed.carryOnCount;
+    }
+    renderLuggageOptions();
+  });
+  ["#checked-bag-count", "#checked-bag-kg", "#carry-on-count"].forEach((selector) => $(selector).addEventListener("input", renderLuggageOptions));
+  $("#list-filter").addEventListener("change", (event) => { filter = event.target.value; renderShoppingList(); });
+  $("#adjust-budget").addEventListener("input", (event) => updateBudget(event.target.value));
+  $("#budget-range").addEventListener("input", (event) => { $("#adjust-budget").value = event.target.value; updateBudget(event.target.value); });
+  $("#copy-summary").addEventListener("click", copySummary);
+  $("#reset-button").addEventListener("click", () => {
+    const confirmed = window.confirm("确定清空本次会话中的资料并重新开始吗？");
+    if (!confirmed) return;
+    const savedAISettings = { ...state.aiSettings };
+    try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* Local-file storage may be unavailable. */ }
+    state = structuredClone(DEFAULT_STATE);
+    state.aiSettings = savedAISettings;
+    renderDomesticPrepItems();
+    initializeLuggagePlanner();
+    fillProfileForm();
+    renderFacilities();
+    renderContractAnalysis();
+    $("#contract-file").value = "";
+    $("#contract-text").value = "";
+    setContractStatus("", "info");
+    showProfileErrors({});
+    showPage("profile");
+  });
+  $$('[data-route]').forEach((control) => control.addEventListener("click", (event) => {
+    event.preventDefault();
+    const route = control.dataset.route;
+    if (route === "results" && state.result) renderResults();
+    showPage(route);
+  }));
+  window.addEventListener("hashchange", () => showPage(location.hash.slice(1) || "profile", { focus: false }));
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !$("#ai-settings-layer").hidden) closeAISettings();
+  });
+}
+
+function init() {
+  renderFacilities();
+  renderDomesticPrepItems();
+  initializeLuggagePlanner();
+  fillProfileForm();
+  bindEvents();
+  checkServices();
+  if (state.result) renderResults();
+  const requested = location.hash.slice(1);
+  showPage(requested || state.route || "profile", { focus: false });
+}
+
+init();
+
+</script>
+</body>
+</html>

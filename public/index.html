@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5ef">
+  <meta name="description" content="UniKit Edinburgh 英国新生第一周采购助手">
+  <title>UniKit Edinburgh｜第一周采购助手</title>
+  <link rel="stylesheet" href="/styles.css?v=1.7.0">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <div class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="#profile" data-route="profile" aria-label="UniKit Edinburgh 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 9h16l-1 11H5L4 9Zm3 0 2-5h6l2 5M8 13v3m4-3v3m4-3v3"/></svg>
+        </span>
+        <span><strong>UniKit Edinburgh</strong><small>英国新生第一周采购助手</small></span>
+      </a>
+      <div class="header-actions">
+        <button id="ai-settings-open" class="mode-chip settings-trigger" type="button" aria-haspopup="dialog" aria-controls="ai-settings-layer">
+          <span class="status-dot"></span><span id="service-mode">正在检查服务</span><span class="settings-cog" aria-hidden="true">⚙</span>
+        </button>
+        <button id="reset-button" class="text-button" type="button">重新开始</button>
+      </div>
+    </header>
+
+    <nav class="step-nav" aria-label="采购方案步骤">
+      <button type="button" data-route="profile" aria-current="step"><span>1</span><b>填写信息</b></button>
+      <i aria-hidden="true"></i>
+      <button type="button" data-route="facilities" disabled><span>2</span><b>宿舍设施</b></button>
+      <i aria-hidden="true"></i>
+      <button type="button" data-route="results" disabled><span>3</span><b>采购结果</b></button>
+    </nav>
+
+    <main id="main-content">
+      <section id="page-profile" class="page" data-page="profile" aria-labelledby="profile-title">
+        <div class="page-heading">
+          <div><p class="eyebrow">步骤 1 / 3</p><h1 id="profile-title">告诉我你的入住情况</h1><p>上传宿舍合同让AI预填，或直接手动完成全部选项。</p></div>
+          <div class="progress" aria-label="完成三分之一"><span style="width:33.333%"></span></div>
+        </div>
+
+        <section class="contract-card card" aria-labelledby="contract-title">
+          <div class="contract-heading">
+            <div><p class="eyebrow">AI 快速填写 · 选填</p><h2 id="contract-title">上传宿舍合同</h2><p>识别房型、床型和明确写出的宿舍设施。未出现在材料中的信息固定返回“不确定”，不会自行猜测。</p></div>
+            <span class="human-loop">AI预填 → 人工确认</span>
+          </div>
+          <div class="contract-inputs">
+            <label class="contract-upload" for="contract-file">
+              <span aria-hidden="true">↑</span>
+              <b>选择 PDF、图片或文本合同</b>
+              <small>最大 4MB · 只需上传包含房型与设施的关键页面</small>
+              <input id="contract-file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.md,application/pdf,image/png,image/jpeg,image/webp,text/plain">
+            </label>
+            <div class="contract-paste">
+              <label for="contract-text">也可以粘贴住宿说明</label>
+              <textarea id="contract-text" rows="5" maxlength="12000" placeholder="例如：Your room contains a 4ft small double bed...&#10;&#10;单文件演示版建议使用此输入；服务器版可直接识别PDF和图片。"></textarea>
+            </div>
+          </div>
+          <div class="contract-actions">
+            <button id="analyze-contract" class="primary-button" type="button">识别并自动填写</button>
+            <button id="load-example-contract" class="secondary-button" type="button">载入示例合同</button>
+            <button id="clear-contract" class="text-button" type="button">清除识别结果</button>
+            <span class="privacy-note">请先移除姓名、地址、学号等个人信息；API密钥不会进入浏览器。</span>
+          </div>
+          <div id="contract-status" class="contract-status" role="status" aria-live="polite" hidden></div>
+          <div id="contract-result" class="contract-result" aria-live="polite" hidden></div>
+        </section>
+
+        <div class="form-layout">
+          <form id="profile-form" class="card form-card" novalidate>
+            <div class="field">
+              <label for="room-type">宿舍房型</label>
+              <select id="room-type" name="roomType" required aria-describedby="room-type-error">
+                <option value="">请选择</option>
+                <option value="ensuite-small-double">En-suite（默认 Small Double）</option>
+                <option value="studio-double">Studio（默认 Double）</option>
+                <option value="shared-single">Shared flat（默认 Single）</option>
+                <option value="shared-bath-single">Shared bathroom（默认 Single）</option>
+                <option value="twin-single">Twin room（默认 Single）</option>
+                <option value="unknown">还不确定</option>
+              </select>
+              <small class="field-error" id="room-type-error"></small>
+              <div id="room-type-ai" class="profile-ai-meta" hidden></div>
+            </div>
+            <div class="field">
+              <label for="bed-size">床的大小</label>
+              <select id="bed-size" name="bedSize" required aria-describedby="bed-size-help bed-size-error">
+                <option value="">请选择或确认</option>
+                <option value="single">Single · 约 90 × 190cm</option>
+                <option value="small-double">Small Double · 约 120 × 190cm</option>
+                <option value="double">Double · 约 135 × 190cm</option>
+                <option value="unknown">还不确定</option>
+              </select>
+              <small id="bed-size-help" class="field-help">房型只会填入常见默认值；购买前仍以住宿合同标注为准。</small>
+              <small class="field-error" id="bed-size-error"></small>
+              <div id="bed-size-ai" class="profile-ai-meta" hidden></div>
+            </div>
+            <div class="field">
+              <label for="move-in">距离入住还有多久</label>
+              <select id="move-in" name="moveIn" required aria-describedby="move-in-error">
+                <option value="">请选择</option>
+                <option value="within-7">7 天以内</option>
+                <option value="8-14">8—14 天</option>
+                <option value="over-14">14 天以上</option>
+                <option value="moved-in">已经入住</option>
+              </select>
+              <small class="field-error" id="move-in-error"></small>
+            </div>
+            <div class="field">
+              <label for="budget">第一周英国落地采购预算</label>
+              <div class="money-input"><span>£</span><input id="budget" name="budget" type="number" min="40" max="500" step="1" inputmode="decimal" placeholder="180" required aria-describedby="budget-help budget-error"></div>
+              <small id="budget-help" class="field-help">国内携带项不计入这笔英镑预算；允许 £40—£500。</small>
+              <small class="field-error" id="budget-error"></small>
+            </div>
+            <div class="field">
+              <label for="cooking">做饭频率</label>
+              <select id="cooking" name="cooking" required aria-describedby="cooking-error">
+                <option value="">请选择</option>
+                <option value="rarely">几乎不做饭</option>
+                <option value="sometimes">每周 3—5 次</option>
+                <option value="daily">基本每天做饭</option>
+              </select>
+              <small class="field-error" id="cooking-error"></small>
+            </div>
+            <fieldset class="field location-field">
+              <legend>你现在在哪里</legend>
+              <div class="segmented">
+                <label><input type="radio" name="location" value="china" required><span>还在国内</span></label>
+                <label><input type="radio" name="location" value="uk"><span>已经到英国</span></label>
+              </div>
+              <small class="field-error" id="location-error"></small>
+            </fieldset>
+            <fieldset class="field full-width bedding-planner">
+              <legend>床品准备情况</legend>
+              <p>这里记录你自己是否已经准备，和下一页“宿舍是否提供”分开判断。床笠或床单有一个已准备，就不会重复推荐铺床用品。</p>
+              <div class="bedding-prep-grid">
+                <label>床笠<select name="preparedFittedSheet" required><option value="">请选择</option><option value="yes">已准备</option><option value="no">没准备</option><option value="unknown">不确定</option></select></label>
+                <label>床单<select name="preparedFlatSheet" required><option value="">请选择</option><option value="yes">已准备</option><option value="no">没准备</option><option value="unknown">不确定</option></select></label>
+                <label>枕头<select name="preparedPillow" required><option value="">请选择</option><option value="yes">已准备</option><option value="no">没准备</option><option value="unknown">不确定</option></select></label>
+                <label>枕套<select name="preparedPillowcase" required><option value="">请选择</option><option value="yes">已准备</option><option value="no">没准备</option><option value="unknown">不确定</option></select></label>
+              </div>
+              <small class="field-error" id="bedding-preparation-error"></small>
+            </fieldset>
+            <details class="field full-width domestic-prep-panel">
+              <summary><span>其他国内准备物品</span><small>选填 · 来自你提供的清单</small></summary>
+              <p>勾选已经准备好的物品。运输标签来自你提供的图片，仅作整理提示，出发前仍需核对航空公司与海关规定。系统只对能明确对应的品类排重；锅具仍需确认炉灶兼容。</p>
+              <div id="domestic-prep-list" class="domestic-prep-list"></div>
+            </details>
+            <div class="field full-width luggage-planner">
+              <div class="luggage-head">
+                <div><label for="luggage-preset">你的行李额度</label><small>随身行李优先留给证件、电子设备和贵重物品；下面的生活用品空间按托运行李计算。</small></div>
+                <select id="luggage-preset" name="luggagePreset" aria-describedby="luggage-allowance-error">
+                  <option value="2x23">2 × 23kg + 1 件随身行李（常见）</option>
+                  <option value="1x23">1 × 23kg + 1 件随身行李</option>
+                  <option value="2x20">2 × 20kg + 1 件随身行李</option>
+                  <option value="custom">自定义额度</option>
+                </select>
+              </div>
+              <div id="custom-luggage" class="custom-luggage" hidden>
+                <label>托运行李件数<input id="checked-bag-count" name="checkedBagCount" type="number" min="1" max="4" step="1" value="2"></label>
+                <label>每件额度（kg）<input id="checked-bag-kg" name="checkedBagKg" type="number" min="15" max="32" step="1" value="23"></label>
+                <label>随身行李件数<input id="carry-on-count" name="carryOnCount" type="number" min="0" max="2" step="1" value="1"></label>
+              </div>
+              <small class="field-error" id="luggage-allowance-error"></small>
+              <p id="luggage-allowance-summary" class="luggage-allowance-summary"></p>
+              <fieldset class="luggage-space-field">
+                <legend>你愿意给生活用品留多少空间？</legend>
+                <div id="luggage-options" class="luggage-options" aria-describedby="luggage-space-error"></div>
+                <small class="field-error" id="luggage-space-error"></small>
+              </fieldset>
+            </div>
+            <div class="field">
+              <label for="guest-count">平时常见招待人数</label>
+              <select id="guest-count" name="guestCount" required aria-describedby="guest-count-error">
+                <option value="">请选择</option>
+                <option value="none">不招待 / 只准备自己</option>
+                <option value="one-two">通常 1—2 位朋友</option>
+                <option value="three-plus">通常 3 位以上</option>
+              </select>
+              <small class="field-error" id="guest-count-error"></small>
+            </div>
+            <div class="field full-width">
+              <label for="carried-text">行李中已经携带的物品 <span class="optional">选填</span></label>
+              <textarea id="carried-text" name="carriedText" rows="4" maxlength="500" placeholder="例如：转换插头、洗漱用品、一条薄毯子"></textarea>
+              <div class="field-meta"><small>中英文都可以；不确定的匹配会请你确认。</small><small id="text-count">0 / 500</small></div>
+              <div id="parsed-preview" class="parsed-preview" hidden></div>
+            </div>
+            <div id="form-summary" class="form-summary" role="alert" hidden></div>
+            <div class="form-actions full-width">
+              <span class="privacy-note"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3m2 0H5v10h14V10Z"/></svg>本版不收集姓名、学校或精确地址</span>
+              <button class="primary-button" type="submit">继续检查宿舍设施 <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+
+          <aside class="side-stack">
+            <div class="warm-card">
+              <span class="icon-tile amber" aria-hidden="true">✦</span>
+              <h2>为什么固定爱丁堡？</h2>
+              <p>第一期先把一个城市的住宿表达、规格条件和购买渠道做准，避免做成泛泛的购物清单。</p>
+            </div>
+            <div class="boundary-card">
+              <p class="eyebrow">本页的真实边界</p>
+              <h2>规则同时决定买什么、在哪里买</h2>
+              <ul>
+                <li><b>自由文本</b>：有密钥时由 AI 结构化；否则用本地词典。</li>
+                <li><b>薄毯子</b>：标成不确定项，不直接等同冬季被芯。</li>
+                <li><b>购买地</b>：按行李空间、尺寸、电器兼容和体积判断。</li>
+                <li><b>预算与排重</b>：始终由可测试的代码处理。</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="page-facilities" class="page" data-page="facilities" aria-labelledby="facilities-title" hidden>
+        <div class="page-heading">
+          <div><p class="eyebrow">步骤 2 / 3</p><h1 id="facilities-title">确认宿舍设施</h1><p id="facilities-subtitle">逐项确认宿舍已经提供的设施；“不确定”不会被当成“没有”。</p></div>
+          <div class="progress" aria-label="完成三分之二"><span style="width:66.666%"></span></div>
+        </div>
+        <div id="ai-confirmation-banner" class="notice info" hidden></div>
+        <div id="bed-warning" class="notice warning" hidden role="status"><b>床型待核实</b><span>请查看住宿合同或联系宿舍；床品会显示“待核实”，不会假设为 Small Double。</span></div>
+
+        <form id="facilities-form">
+          <div id="facility-groups" class="facility-grid"></div>
+          <div id="rule-summary" class="notice success" aria-live="polite"></div>
+          <label id="ai-confirmation-control" class="ai-confirmation-control" hidden>
+            <input id="confirm-ai-results" type="checkbox">
+            <span><b>我已确认AI预填结果</b><small>我检查了原文依据，并修改了错误或不确定的信息。</small></span>
+          </label>
+          <div id="ai-confirmation-error" class="form-summary" role="alert" hidden></div>
+          <div class="split-actions">
+            <button class="secondary-button" type="button" data-route="profile">← 返回修改</button>
+            <button class="primary-button" type="submit">生成采购方案 <span aria-hidden="true">✦</span></button>
+          </div>
+        </form>
+      </section>
+
+      <section id="page-loading" class="page loading-page" data-page="loading" aria-labelledby="loading-title" hidden>
+        <div class="loading-card card">
+          <span class="loading-mark" aria-hidden="true"><span></span></span>
+          <p class="eyebrow">正在生成</p>
+          <h1 id="loading-title">先运行规则，再补充商品事实</h1>
+          <div class="loading-steps" aria-live="polite">
+            <div id="load-rules"><span>1</span><div><b>计算品类清单</b><small>排除已有物品，检查床型、炉具和优先级</small></div><em>处理中</em></div>
+            <div id="load-products"><span>2</span><div><b>查询重点商品</b><small>最多 5 个高价格或高规格风险品类</small></div><em>等待</em></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-results" class="page" data-page="results" aria-labelledby="results-title" hidden>
+        <div class="page-heading result-heading">
+          <div><p class="eyebrow">步骤 3 / 3</p><h1 id="results-title">你的第一周采购方案</h1><p id="result-subtitle">品类是主信息，商品候选只是可追溯的辅助事实。</p></div>
+          <span id="budget-status" class="status-pill"></span>
+        </div>
+
+        <div class="metrics" aria-label="预算概览">
+          <div><span>英国采购预算</span><strong id="metric-budget">—</strong></div>
+          <div><span>预计英国支出</span><strong id="metric-spend">—</strong></div>
+          <div><span>剩余金额</span><strong id="metric-left">—</strong></div>
+          <div><span id="metric-count-label">本周行动</span><strong id="metric-count">—</strong></div>
+        </div>
+
+        <div class="budget-card">
+          <div class="budget-card-head"><div><p class="eyebrow">唯一后续调整</p><h2>改变总预算</h2></div><div class="budget-entry"><span>£</span><input id="adjust-budget" type="number" min="40" max="500" step="1" aria-label="调整后的总预算"></div></div>
+          <input id="budget-range" type="range" min="40" max="300" step="5" aria-label="预算滑块">
+          <div class="range-labels"><span>£40</span><span>£300</span></div>
+          <div id="budget-diff" class="budget-diff" aria-live="polite"></div>
+        </div>
+
+        <div id="insufficient-notice" class="notice danger" hidden></div>
+        <div id="fact-notice" class="notice info"></div>
+        <div id="stage-summary" class="stage-summary" aria-label="购买阶段概览"></div>
+
+        <div class="result-layout">
+          <div>
+            <div class="section-heading"><div><p class="eyebrow">确定性规则结果</p><h2>采购清单</h2></div><div class="list-controls"><label><span class="sr-only">筛选清单</span><select id="list-filter"><option value="all">全部购买阶段</option><option value="domestic">国内带</option><option value="uk">英国买</option><option value="verify">待核实</option><option value="deferred">以后再买</option></select></label></div></div>
+            <div id="shopping-list" class="shopping-list" aria-live="polite"></div>
+          </div>
+          <aside>
+            <div class="section-heading"><div><p class="eyebrow">外部商品事实</p><h2>重点商品候选</h2></div></div>
+            <div id="product-panel" class="product-panel"></div>
+          </aside>
+        </div>
+
+        <div class="split-actions bottom-actions">
+          <button class="secondary-button" type="button" data-route="facilities">← 返回修改</button>
+          <button id="copy-summary" class="secondary-button" type="button">复制清单摘要</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="ai-settings-layer" class="settings-layer" hidden>
+    <button class="settings-backdrop" type="button" data-close-ai-settings aria-label="关闭AI设置"></button>
+    <section class="settings-drawer" role="dialog" aria-modal="true" aria-labelledby="ai-settings-title">
+      <header class="settings-drawer-head">
+        <div><p class="eyebrow">运行配置</p><h2 id="ai-settings-title">AI 来源与模型设置</h2><p>选择合同与自由文本解析使用的来源。采购规则和预算计算始终由本地确定性代码处理。</p></div>
+        <button id="ai-settings-close" class="drawer-close" type="button" data-close-ai-settings aria-label="关闭">×</button>
+      </header>
+
+      <form id="ai-settings-form" class="settings-form">
+        <fieldset class="source-fieldset">
+          <legend><span>选择 AI 来源</span><small>仅影响需要语义理解的任务</small></legend>
+          <div class="source-options">
+            <label class="source-option" data-source-card="gemini">
+              <input type="radio" name="aiSource" value="gemini">
+              <span class="source-icon gemini" aria-hidden="true">✦</span>
+              <span class="source-copy"><b>Google Gemini API</b><small>免费额度优先；解析 PDF、图片、合同文字和已携带物品</small></span>
+              <span id="gemini-source-badge" class="source-badge">检查中</span>
+            </label>
+            <label class="source-option" data-source-card="openai">
+              <input type="radio" name="aiSource" value="openai">
+              <span class="source-icon openai" aria-hidden="true">◎</span>
+              <span class="source-copy"><b>OpenAI API</b><small>真实解析 PDF、图片、合同文字和已携带物品</small></span>
+              <span id="openai-source-badge" class="source-badge">检查中</span>
+            </label>
+            <label class="source-option" data-source-card="codex">
+              <input type="radio" name="aiSource" value="codex" disabled>
+              <span class="source-icon codex" aria-hidden="true">⌘</span>
+              <span class="source-copy"><b>Codex 桌面 Agent</b><small>可辅助开发与测试，但普通网页不能把桌面 Agent 当作线上 API</small></span>
+              <span class="source-badge unavailable">开发辅助</span>
+            </label>
+            <label class="source-option" data-source-card="demo">
+              <input type="radio" name="aiSource" value="demo">
+              <span class="source-icon demo" aria-hidden="true">▷</span>
+              <span class="source-copy"><b>演示模式</b><small>无需密钥；支持手动填写和粘贴文字，不解析 PDF 或图片</small></span>
+              <span class="source-badge demo">免费</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <section id="model-settings" class="model-settings" aria-labelledby="model-settings-title">
+          <div><p class="eyebrow">模型设置</p><h3 id="model-settings-title">合同理解模型</h3></div>
+          <label id="ai-model-label" for="ai-model">AI 模型</label>
+          <select id="ai-model" name="aiModel">
+            <option value="gpt-5-mini">gpt-5-mini · 当前默认</option>
+            <option value="gpt-5.4-mini">gpt-5.4-mini · 可选</option>
+          </select>
+          <p>模型只提取材料中有依据的信息，并返回结构化字段、置信度和原文证据；缺失信息必须为“不确定”。</p>
+        </section>
+
+        <div id="ai-connection-status" class="connection-status" role="status" aria-live="polite">
+          <b>正在检查连接</b><span>请稍候…</span>
+        </div>
+        <button id="test-ai-connection" class="secondary-button wide-button" type="button">测试当前连接</button>
+
+        <footer class="settings-actions">
+          <button class="secondary-button" type="button" data-close-ai-settings>取消</button>
+          <button class="primary-button" type="submit">保存设置</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="/js/app.js?v=1.7.0"></script>
+</body>
+</html>
