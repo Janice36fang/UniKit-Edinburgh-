@@ -153,6 +153,8 @@ PRODUCT_MERCHANT_ALLOWLIST=Argos,IKEA,Dunelm,John Lewis,Tesco,ASDA
 
 仓库中的 `.railway/railway.ts` 使用 Railway 当前的 Infrastructure as Code 配置 `/api/health` 健康检查；服务沿用免费方案支持的“失败时重启、最多 10 次”。`.github/workflows/ci.yml` 会在每次推送或 Pull Request 时运行完整自动测试。
 
+Railway 服务已连接本仓库的 `main` 分支；后续代码推送会触发在线服务重新构建。部署前先查看 GitHub Actions 测试结果，密钥继续只在 Railway Variables 中维护。
+
 ### Docker
 
 ```bash
