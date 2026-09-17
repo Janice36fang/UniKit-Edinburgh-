@@ -4,5 +4,6 @@
 .DS_Store
 coverage/
 node_modules/
-.railway/
+.railway/*
+!.railway/railway.ts
 .vercel/

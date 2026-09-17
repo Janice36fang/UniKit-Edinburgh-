@@ -151,7 +151,7 @@ PRODUCT_MERCHANT_ALLOWLIST=Argos,IKEA,Dunelm,John Lewis,Tesco,ASDA
 
 当前公开演示使用 Railway。通过 Railway CLI 部署本目录时，`.railwayignore`、`.dockerignore` 和 `.gitignore` 会共同排除本地密钥文件；`GEMINI_API_KEY` 必须在 Railway Variables 中单独设置。
 
-仓库中的 `railway.toml` 已配置 `/api/health` 健康检查和失败自动重启。`.github/workflows/ci.yml` 会在每次推送或 Pull Request 时运行完整自动测试。
+仓库中的 `.railway/railway.ts` 使用 Railway 当前的 Infrastructure as Code 配置 `/api/health` 健康检查；服务沿用免费方案支持的“失败时重启、最多 10 次”。`.github/workflows/ci.yml` 会在每次推送或 Pull Request 时运行完整自动测试。
 
 ### Docker
 
