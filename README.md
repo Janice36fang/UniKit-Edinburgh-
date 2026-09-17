@@ -1,5 +1,7 @@
 # UniKit Edinburgh 网页端 MVP
 
+[![CI](https://github.com/Janice36fang/UniKit-Edinburgh-/actions/workflows/ci.yml/badge.svg)](https://github.com/Janice36fang/UniKit-Edinburgh-/actions/workflows/ci.yml)
+
 这是一个可直接运行的三页 Web MVP：页面1支持上传住宿合同让AI预填，也支持完全手动填写；页面2进行“AI预填＋人工确认”；页面3由确定性规则生成第一周采购方案。浏览器和后端复用同一套规则；没有任何 API Key 时，也可以完整走通三页、排重、规格检查和预算调整。项目同时生成 `UniKit_Edinburgh.html` 单文件版，可直接发给别人并双击使用。
 
 **在线演示：** [UniKit Edinburgh｜第一周采购助手](https://unikit-edinburgh-production.up.railway.app/?v=1.7.0&provider=gemini#profile)
@@ -148,6 +150,8 @@ PRODUCT_MERCHANT_ALLOWLIST=Argos,IKEA,Dunelm,John Lewis,Tesco,ASDA
 - 对外监听：设置 `HOST=0.0.0.0`，`PORT` 使用平台提供的值
 
 当前公开演示使用 Railway。通过 Railway CLI 部署本目录时，`.railwayignore`、`.dockerignore` 和 `.gitignore` 会共同排除本地密钥文件；`GEMINI_API_KEY` 必须在 Railway Variables 中单独设置。
+
+仓库中的 `railway.toml` 已配置 `/api/health` 健康检查和失败自动重启。`.github/workflows/ci.yml` 会在每次推送或 Pull Request 时运行完整自动测试。
 
 ### Docker
 

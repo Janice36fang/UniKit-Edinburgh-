@@ -4,6 +4,7 @@
 .git/
 .railway/
 .vercel/
+.github/
 node_modules/
 coverage/
 .DS_Store

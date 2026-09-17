@@ -4,6 +4,7 @@ node_modules/
 coverage/
 .DS_Store
 .vercel/
+.github/
 test/
 Start Gemini Securely.command
 Start UniKit.command
