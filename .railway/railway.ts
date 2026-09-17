@@ -1,4 +1,4 @@
-import { defineRailway, preserve, project, service } from "railway/iac";
+import { defineRailway, github, preserve, project, service } from "railway/iac";
 
 // This repository manages only its own resources in the environment. Other
 // repositories export their own partial name.
@@ -7,6 +7,7 @@ export const partial = "unikit-edinburgh";
 
 export default defineRailway(() => {
   const unikit_edinburgh = service("unikit-edinburgh", {
+    source: github("Janice36fang/UniKit-Edinburgh-"),
     healthcheck: "/api/health",
     healthcheckTimeout: 300,
     env: {
